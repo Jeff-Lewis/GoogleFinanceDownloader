@@ -12,7 +12,7 @@ namespace GoogleFinanceLibrary
     public class LeaderPrediction
     {
 		private class Prediction{
-			public Dictionary<string, float> ChangePerTicker { get; set; }
+			public Dictionary<string, double> ChangePerTicker { get; set; }
 			//public List<Tick> PredictorTicks { get; set;}
 			public Tick ActualTick { get; set; }
 			//public bool IsDirectionAccurate { get; set; }
@@ -39,16 +39,16 @@ namespace GoogleFinanceLibrary
 
 			// Header
 			Prediction firstPrediction = predictionDictionary.Values.First();
-			sb.Append("Date");
+			sb.AppendFormat("{0,-20}{1,-20}", "Date", "Index");
 			foreach (string ticker in firstPrediction.ChangePerTicker.Keys)
-				sb.Append("\t").Append(ticker);
+				sb.AppendFormat("{0,-20}", ticker);
 			sb.AppendLine();
 
 			// Body
 			foreach (KeyValuePair<DateTime, Prediction> keyValue in predictionDictionary) {
-				sb.Append(keyValue.Key);
-				foreach (KeyValuePair<string, float> changePerTickerKeyValue in keyValue.Value.ChangePerTicker) {
-					sb.Append("\t").Append(changePerTickerKeyValue.Key + "(" + changePerTickerKeyValue.Value + ")");
+				sb.AppendFormat("{0,-20}{1,-20}", keyValue.Key.ToShortDateString(), keyValue.Value.ActualTick.GetChangePercent(true));
+				foreach (KeyValuePair<string, double> changePerTickerKeyValue in keyValue.Value.ChangePerTicker) {
+					sb.AppendFormat("{0,-20}", changePerTickerKeyValue.Value);
 				}
 				sb.AppendLine();
 			}
@@ -61,16 +61,15 @@ namespace GoogleFinanceLibrary
 
 			// Assume all dates are the same, so take the first from the leader ticks
 			List<Tick> firstLeaderTickList = leaderTickDictionary.Values.First();
-			for (int i = 0; i < (firstLeaderTickList.Count - futureDays); i++) {				
-
+			for (int i = 0; i < (firstLeaderTickList.Count - futureDays); i++) {	
 				// Find change per ticker					
 				Prediction p = new Prediction();
-				p.ChangePerTicker = new Dictionary<string, float>();
+				p.ChangePerTicker = new Dictionary<string, double>();
 				foreach (KeyValuePair<string, List<Tick>> keyValue in leaderTickDictionary) {					
 					// Go ahead how many days we need to
-					float cumulativeChange = 0;
+					double cumulativeChange = 0;
 					for (int j = 0; j < leaderWindowDays; j++) 
-						cumulativeChange += keyValue.Value[j].GetChangePercent(true);
+						cumulativeChange += keyValue.Value[i+j].GetChangePercent(true);
 					
 					p.ChangePerTicker.Add(keyValue.Key, cumulativeChange);
 				}				

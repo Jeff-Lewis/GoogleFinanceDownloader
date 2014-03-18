@@ -14,28 +14,7 @@ namespace GoogleFinanceLibrary {
 		public float ClosePrice {get; private set;}
 		public float Volume {get; private set;}
 		public Tick LastTick { get; set; }
-		/*
-		public float ChangeSinceOpen {
-			get {
-				return ClosePrice - OpenPrice;
-			}
-		}
-		public float ChangeSinceOpenPercent {
-			get {
-				return ChangeSinceOpen / OpenPrice * 100;
-			}
-		}
-		public float ChangeSinceLastClose {
-			get {
-				return ClosePrice - LastTick.ClosePrice;
-			}
-		}
-		public float ChangeSinceLastClosePercent {
-			get {
-				return ChangeSinceLastClose / LastTick.ClosePrice * 100;
-			}
-		}*/
-
+		
 		// Factory method
 		public static Tick FromStringArray(string[] data) {
 			return new Tick {
@@ -49,10 +28,10 @@ namespace GoogleFinanceLibrary {
 		}
 		
 		// Public methods
-		public float GetChangePercent(bool sinceLastClose) {
+		public double GetChangePercent(bool sinceLastClose) {
 			float lastPrice = (sinceLastClose && LastTick != null) ? LastTick.ClosePrice : OpenPrice;
 
-			return (ClosePrice - lastPrice) / lastPrice * 100;
+			return Math.Round((ClosePrice - lastPrice) / lastPrice * 100, 2);
 		}
 	}
 }
