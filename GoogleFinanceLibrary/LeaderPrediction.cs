@@ -28,9 +28,9 @@ namespace GoogleFinanceLibrary
 			// Get index data
 			List<Tick> indexTicks = TickRetriever.GetData(indexTicker, exchange, startDate, endDate);
 
-			Dictionary<DateTime, Prediction> predictionDictionary = GetPredictions(leaderTicks, indexTicks, leaderWindowDays, futureDays);			
+			Dictionary<DateTime, Prediction> predictionDictionary = GetPredictions(leaderTicks, indexTicks, leaderWindowDays, futureDays);
 
-			return GetStringOutput(
+			return GetStringOutput(predictionDictionary);
 		}
 
 		// Private methods
