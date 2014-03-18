@@ -25,7 +25,9 @@ namespace MarketAnalyzer {
 			int windowDays = 1;
 			int futureDays = 1;
 
-			LeaderPrediction.Predict(leaderTickers, indexTicker, exchange, startDate, endDate, windowDays, futureDays);
+			string result = LeaderPrediction.Predict(leaderTickers, indexTicker, exchange, startDate, endDate, windowDays, futureDays);
+			richTextBox1.Text = result;
+
 		}
 	}
 }
