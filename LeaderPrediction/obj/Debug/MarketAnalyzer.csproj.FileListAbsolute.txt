@@ -1,0 +1,13 @@
+C:\Users\xdotiwalla\SkyDrive\Documents\Source\GoogleFinanceDownloader_demo\GoogleFinanceDownloaderTest\LeaderPrediction\obj\Debug\MarketAnalyzer.csprojResolveAssemblyReference.cache
+C:\Users\xdotiwalla\SkyDrive\Documents\Source\GoogleFinanceDownloader_demo\GoogleFinanceDownloaderTest\LeaderPrediction\obj\Debug\MarketAnalyzer.Form1.resources
+C:\Users\xdotiwalla\SkyDrive\Documents\Source\GoogleFinanceDownloader_demo\GoogleFinanceDownloaderTest\LeaderPrediction\obj\Debug\MarketAnalyzer.csproj.GenerateResource.Cache
+C:\Users\xdotiwalla\SkyDrive\Documents\Source\GoogleFinanceDownloader_demo\GoogleFinanceDownloaderTest\LeaderPrediction\bin\Debug\GoogleFinanceLibrary.dll
+C:\Users\xdotiwalla\SkyDrive\Documents\Source\GoogleFinanceDownloader_demo\GoogleFinanceDownloaderTest\LeaderPrediction\bin\Debug\GoogleFinanceDownloader.dll
+C:\Users\xdotiwalla\SkyDrive\Documents\Source\GoogleFinanceDownloader_demo\GoogleFinanceDownloaderTest\LeaderPrediction\bin\Debug\GoogleFinanceLibrary.pdb
+C:\Users\xdotiwalla\SkyDrive\Documents\Source\GoogleFinanceDownloader_demo\GoogleFinanceDownloaderTest\LeaderPrediction\bin\Debug\GoogleFinanceDownloader.pdb
+C:\Users\xdotiwalla\SkyDrive\Documents\Source\GoogleFinanceDownloader_demo\GoogleFinanceDownloaderTest\LeaderPrediction\bin\Debug\MarketAnalyzer.exe.config
+C:\Users\xdotiwalla\SkyDrive\Documents\Source\GoogleFinanceDownloader_demo\GoogleFinanceDownloaderTest\LeaderPrediction\bin\Debug\MarketAnalyzer.exe
+C:\Users\xdotiwalla\SkyDrive\Documents\Source\GoogleFinanceDownloader_demo\GoogleFinanceDownloaderTest\LeaderPrediction\bin\Debug\MarketAnalyzer.pdb
+C:\Users\xdotiwalla\SkyDrive\Documents\Source\GoogleFinanceDownloader_demo\GoogleFinanceDownloaderTest\LeaderPrediction\obj\Debug\MarketAnalyzer.Properties.Resources.resources
+C:\Users\xdotiwalla\SkyDrive\Documents\Source\GoogleFinanceDownloader_demo\GoogleFinanceDownloaderTest\LeaderPrediction\obj\Debug\MarketAnalyzer.exe
+C:\Users\xdotiwalla\SkyDrive\Documents\Source\GoogleFinanceDownloader_demo\GoogleFinanceDownloaderTest\LeaderPrediction\obj\Debug\MarketAnalyzer.pdb

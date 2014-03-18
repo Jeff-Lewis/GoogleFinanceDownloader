@@ -1,0 +1,38 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GoogleFinanceDownloaderTest", "GoogleFinanceDownloaderTest\GoogleFinanceDownloaderTest.csproj", "{8DD0F3BB-4F3D-4B52-9D5F-DD3EF7F4224D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GoogleFinanceDownloader", "GoogleFinanceDownloader\GoogleFinanceDownloader.csproj", "{A32AF31F-DAA1-4B65-AF42-DDE349B89E2D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarketAnalyzer", "LeaderPrediction\MarketAnalyzer.csproj", "{FA705633-6D53-4968-BA6A-27BD3CE0D411}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GoogleFinanceLibrary", "GoogleFinanceLibrary\GoogleFinanceLibrary.csproj", "{A74592CC-66CD-41F1-8837-F4D1D387AD43}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8DD0F3BB-4F3D-4B52-9D5F-DD3EF7F4224D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8DD0F3BB-4F3D-4B52-9D5F-DD3EF7F4224D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8DD0F3BB-4F3D-4B52-9D5F-DD3EF7F4224D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8DD0F3BB-4F3D-4B52-9D5F-DD3EF7F4224D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A32AF31F-DAA1-4B65-AF42-DDE349B89E2D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A32AF31F-DAA1-4B65-AF42-DDE349B89E2D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A32AF31F-DAA1-4B65-AF42-DDE349B89E2D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A32AF31F-DAA1-4B65-AF42-DDE349B89E2D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FA705633-6D53-4968-BA6A-27BD3CE0D411}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FA705633-6D53-4968-BA6A-27BD3CE0D411}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FA705633-6D53-4968-BA6A-27BD3CE0D411}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FA705633-6D53-4968-BA6A-27BD3CE0D411}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A74592CC-66CD-41F1-8837-F4D1D387AD43}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A74592CC-66CD-41F1-8837-F4D1D387AD43}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A74592CC-66CD-41F1-8837-F4D1D387AD43}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A74592CC-66CD-41F1-8837-F4D1D387AD43}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
