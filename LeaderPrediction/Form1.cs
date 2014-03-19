@@ -16,7 +16,7 @@ namespace MarketAnalyzer {
 		}
 
 		private void button1_Click(object sender, EventArgs e) {
-			string[] leaderTickers = {"TSLA", "NFLX", "FB"};
+			/*string[] leaderTickers = {"TSLA", "NFLX", "FB"};
 			string indexTicker = "SPY";
 			string exchange = string.Empty;
 			
@@ -25,9 +25,12 @@ namespace MarketAnalyzer {
 			int windowDays = 1;
 			int futureDays = 1;
 
-			string result = LeaderPrediction.Predict(leaderTickers, indexTicker, exchange, startDate, endDate, windowDays, futureDays);
-			richTextBox1.Text = result;
+			PredictionDictionary result = LeaderPrediction.Predict(leaderTickers, indexTicker, exchange, startDate, endDate, windowDays, futureDays);
+			richTextBox1.Text = result.ToString();
+			*/
 
+			string result = LeaderPredictionParameterTester.Test();
+			richTextBox1.Text = result;
 		}
 	}
 }
