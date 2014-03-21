@@ -5,8 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace GoogleFinanceLibrary {
-	public class Tick {
+	public class Tick : IEquatable<Tick>, IComparable<Tick> {
 		// Public properties
+		public string Symbol { get; private set; }
 		public DateTime Date {get; private set;}
 		public float OpenPrice {get; private set;}
 		public float HighPrice {get; private set;}
@@ -16,8 +17,9 @@ namespace GoogleFinanceLibrary {
 		public Tick LastTick { get; set; }
 		
 		// Factory method
-		public static Tick FromStringArray(string[] data) {
+		public static Tick FromStringArray(string symbol, string[] data) {
 			return new Tick {
+				Symbol = symbol,
 				Date = DateTime.Parse(data[0]),
 				OpenPrice = float.Parse(data[1]),
 				HighPrice = float.Parse(data[2]),
@@ -33,5 +35,21 @@ namespace GoogleFinanceLibrary {
 
 			return Math.Round((ClosePrice - lastPrice) / lastPrice * 100, 2);
 		}
+
+		#region IEquatable<Tick> Members
+
+		public bool Equals(Tick other) {
+			return ((this.Symbol == other.Symbol) && (this.Date == other.Date));
+		}
+
+		#endregion
+
+		#region IComparable<Tick> Members
+
+		public int CompareTo(Tick other) {
+			return this.Date.CompareTo(other.Date);
+		}
+
+		#endregion
 	}
 }

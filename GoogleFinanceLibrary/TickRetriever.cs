@@ -13,14 +13,14 @@ namespace GoogleFinanceLibrary {
 		private static Dictionary<string, TickList> tickCache = new Dictionary<string, TickList>();
 
 		// Public methods		
-		public static TickList GetData(string ticker, string exchange, DateTime startDate, DateTime endDate) {
+		public static TickList GetData(string symbol, string exchange, DateTime startDate, DateTime endDate) {
 			// If we already have the data, dont get it again
-			string cacheKey = ticker + exchange + startDate + endDate;
+			string cacheKey = symbol + exchange + startDate + endDate;
 			TickList result;
 			if (!tickCache.TryGetValue(cacheKey, out result))
 			{
 				// Set up the url request
-				DownloadURIBuilder uriBuilder = new DownloadURIBuilder(exchange, ticker);
+				DownloadURIBuilder uriBuilder = new DownloadURIBuilder(exchange, symbol);
 				string url = uriBuilder.getGetPricesUrlForRecentData(startDate, endDate);
 
 				// Get the data
@@ -39,7 +39,7 @@ namespace GoogleFinanceLibrary {
 						throw new Exception(errorMessage);
 				}
 
-				result = ParseStringData(resultValue);
+				result = ParseStringData(symbol, resultValue);
 
 				// Put into cache
 				tickCache.Add(cacheKey, result);
@@ -47,26 +47,26 @@ namespace GoogleFinanceLibrary {
 
 			return result;
 		}
-		public static Dictionary<string, TickList> GetData(string[] tickerArray, string exchange, DateTime startDate, DateTime endDate) {
-			Dictionary<string, TickList> tickDictionary = new Dictionary<string, TickList>();
-	
-			foreach (string ticker in tickerArray) {
-				TickList ticks = GetData(ticker, exchange, startDate, endDate);
-				tickDictionary.Add(ticker, ticks);
+		public static TickMatrix GetData(string[] symbolArray, string exchange, DateTime startDate, DateTime endDate) {			
+			TickMatrix result = new TickMatrix();
+
+			foreach (string symbol in symbolArray) {
+				TickList ticks = GetData(symbol, exchange, startDate, endDate);
+				result.Set(symbol, ticks);				
 			}
 
-			return tickDictionary;
+			return result;
 		}
 		
 		// Private methods
-		private static TickList ParseStringData(string dataString) {
+		private static TickList ParseStringData(string symbol, string dataString) {
 			// Split into lines
 			string[] lines = dataString.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
 
 			// Process		
 			var query = from line in lines.Skip(1)
 						let data = line.Split(',')
-						select Tick.FromStringArray(data);
+						select Tick.FromStringArray(symbol, data);
 					
 			return TickList.FromIEnumerable(query);
 		}
