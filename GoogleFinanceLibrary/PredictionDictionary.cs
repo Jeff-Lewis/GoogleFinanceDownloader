@@ -31,11 +31,16 @@ namespace GoogleFinanceLibrary {
 
 			// Body
 			foreach (KeyValuePair<DateTime, Prediction> keyValue in this) {
-				sb.AppendFormat("{0,-20}{1,-20}{2,-20}{3,-20}{4,-20}", keyValue.Key.ToShortDateString(), keyValue.Value.ActualTick.GetChangePercent(true), keyValue.Value.PredictorAverageChange, 
-					keyValue.Value.ActualChangeDividedByPredictorAverage, keyValue.Value.IsDirectionAccurate);
+				sb.AppendFormat("{0,-20}{1,-20}{2,-20}{3,-20}{4,-20}", 
+					keyValue.Key.ToShortDateString(), 
+					keyValue.Value.ActualTick.GetChangePercent(true), 					
+					keyValue.Value.PredictorAverageChange, 
+					keyValue.Value.ActualChangeDividedByPredictorAverage, 
+					keyValue.Value.IsDirectionAccurate);
 				foreach (KeyValuePair<string, double> changePerTickerKeyValue in keyValue.Value.ChangePerPredictorSymbol) {
 					sb.AppendFormat("{0,-20}", changePerTickerKeyValue.Value);
 				}
+				sb.AppendFormat("({0})", keyValue.Value.PredictorStartDate.ToShortDateString());
 				sb.AppendLine();
 			}
 

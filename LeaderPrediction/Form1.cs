@@ -29,7 +29,12 @@ namespace MarketAnalyzer {
 			richTextBox1.Text = result.ToString();
 			*/
 
+			/*
 			string result = LeaderPredictionParameterTester.Test();
+			richTextBox1.Text = result;
+			*/
+
+			string result = CorrelationFinder.Find();
 			richTextBox1.Text = result;
 		}
 	}

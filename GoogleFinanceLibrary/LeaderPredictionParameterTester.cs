@@ -8,7 +8,7 @@ namespace GoogleFinanceLibrary {
 	public class LeaderPredictionParameterTester {
 		// Constants
 		private static readonly DateTime endDate = DateTime.Now;
-		private static readonly DateTime startDate = DateTime.Now.AddMonths(-1);
+		private static readonly DateTime startDate = DateTime.Now.AddMonths(-3);
 		private const string indexTicker = "SPY";
 		private const string exchange = "";
 
@@ -18,8 +18,8 @@ namespace GoogleFinanceLibrary {
 			new string[] {"RUT"},  
 			new string[] {"IBB"},  
 		};
-		private static int[] windowDays = {1, 2, 3, 4, 5, 6, 7, 8, 9};
-		private static int[] futureDays = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+		private static int[] windowDays = Enumerable.Range(1, 20).ToArray();
+		private static int[] futureDays = Enumerable.Range(1, 20).ToArray();
 
 		// Public methods
 		public static string Test() {
@@ -38,7 +38,7 @@ namespace GoogleFinanceLibrary {
 			foreach (PredictionDictionary pd in sortedResults)
 				sb.Append(pd.ToString());
 
-			return sb.ToString();
+			return sb.AppendLine().ToString();
 		}
 	}
 }

@@ -34,42 +34,24 @@ namespace GoogleFinanceLibrary
 
 			// Create a prediction for each day
 			foreach (DateTime day in leaderTicks.GetAllDates()) {
-				Prediction p = new Prediction() {
-					ActualTick = indexTicks.GetFutureTick(day, futureDays)
-				};
+				Prediction p = new Prediction();
+				try {
+					p.ActualTick = indexTicks.GetFutureTick(day, leaderWindowDays - 1 + futureDays);				
+				} catch {
+					// If we dont have this tick, screw it and go to the next iteration
+					continue;
+				}
 
 				// Find the change per ticker over the window days
 				foreach (string symbol in leaderTicks.GetAllSymbols()) {
 					double change = leaderTicks.GetAverageChangeOverDates(symbol, day, leaderWindowDays);
 					p.ChangePerPredictorSymbol.Add(symbol, change);
+					p.PredictorStartDate = day;
 				}
 
 				// Add this prediction
 				result.Add(p.ActualTick.Date, p);
 			}
-
-			/*
-			// Assume all dates are the same, so take the first from the leader ticks
-			List<Tick> firstLeaderTickList = leaderTickDictionary.Values.First();
-			for (int i = 0; i < (firstLeaderTickList.Count - Math.Max(futureDays, leaderWindowDays)); i++) {	
-				// Find change per ticker					
-				Prediction p = new Prediction();			
-				p.ChangePerPredictorTicker = new Dictionary<string, double>();
-				foreach (KeyValuePair<string, TickList> keyValue in leaderTickDictionary) {					
-					// Go ahead how many days we need to
-					double cumulativeChange = 0;
-					for (int j = 0; j < leaderWindowDays; j++) 
-						cumulativeChange += keyValue.Value[i+j].GetChangePercent(true);
-
-					p.ChangePerPredictorTicker.Add(keyValue.Key, cumulativeChange);
-				}				
-
-				// Add this prediction		
-				DateTime predictionDate = firstLeaderTickList[i + futureDays].Date;
-				p.ActualTick = indexTicks.First(t => t.Date == predictionDate);
-				result.Add(predictionDate, p);
-			}
-			*/
 
 			return result;
 		}		

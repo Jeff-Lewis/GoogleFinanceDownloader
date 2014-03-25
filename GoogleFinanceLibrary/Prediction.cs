@@ -17,7 +17,8 @@ namespace GoogleFinanceLibrary {
 
 				return Math.Round(sum / ChangePerPredictorSymbol.Count, 2);
 			}
-		}		
+		}
+		public DateTime PredictorStartDate { get; set; }		
 		public double ActualChangeDividedByPredictorAverage {
 			get {
 				return Math.Round(ActualTick.GetChangePercent(true) / PredictorAverageChange, 2);

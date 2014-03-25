@@ -30,8 +30,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Windows.Forms.DataVisualization" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -39,6 +41,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CorrelationFinder.cs" />
     <Compile Include="LeaderPrediction.cs" />
     <Compile Include="LeaderPredictionParameterTester.cs" />
     <Compile Include="Prediction.cs" />
@@ -53,6 +56,10 @@
     <None Include="app.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\..\Documents\GitHub\mathnet-numerics\src\Numerics\Numerics.csproj">
+      <Project>{b7cae5f4-a23f-4438-b5be-41226618b695}</Project>
+      <Name>Numerics</Name>
+    </ProjectReference>
     <ProjectReference Include="..\GoogleFinanceDownloader\GoogleFinanceDownloader.csproj">
       <Project>{a32af31f-daa1-4b65-af42-dde349b89e2d}</Project>
       <Name>GoogleFinanceDownloader</Name>

@@ -5,7 +5,9 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 using GoogleFinanceDownloader;
+using Microsoft.VisualBasic.FileIO;
 
 namespace GoogleFinanceLibrary {
 	public class TickRetriever {
@@ -14,11 +16,13 @@ namespace GoogleFinanceLibrary {
 
 		// Public methods		
 		public static TickList GetData(string symbol, string exchange, DateTime startDate, DateTime endDate) {
-			// If we already have the data, dont get it again
-			string cacheKey = symbol + exchange + startDate + endDate;
-			TickList result;
-			if (!tickCache.TryGetValue(cacheKey, out result))
-			{
+			// If we already have the data, dont get it again					
+			string fileName = (exchange + symbol + startDate.ToShortDateString() + endDate.ToShortDateString()).Replace('/', '_');
+			string resultValue;
+
+			if (File.Exists(fileName))
+				resultValue = ReadFromFile(fileName);
+			else {
 				// Set up the url request
 				DownloadURIBuilder uriBuilder = new DownloadURIBuilder(exchange, symbol);
 				string url = uriBuilder.getGetPricesUrlForRecentData(startDate, endDate);
@@ -28,8 +32,7 @@ namespace GoogleFinanceLibrary {
 				using (WebClient wClient = new WebClient()) {
 					downloadedData = wClient.DownloadString(url);
 				}
-
-				string resultValue;
+								
 				using (MemoryStream ms = new MemoryStream(System.Text.Encoding.Default.GetBytes(downloadedData))) {
 					DataProcessor dp = new DataProcessor();
 					string errorMessage;
@@ -39,11 +42,10 @@ namespace GoogleFinanceLibrary {
 						throw new Exception(errorMessage);
 				}
 
-				result = ParseStringData(symbol, resultValue);
-
-				// Put into cache
-				tickCache.Add(cacheKey, result);
+				WriteToFile(resultValue, fileName);
 			}
+
+			TickList result = ParseStringData(exchange, symbol, resultValue, startDate);								
 
 			return result;
 		}
@@ -52,23 +54,86 @@ namespace GoogleFinanceLibrary {
 
 			foreach (string symbol in symbolArray) {
 				TickList ticks = GetData(symbol, exchange, startDate, endDate);
-				result.Set(symbol, ticks);				
+				result.Set(exchange + ":" + symbol, ticks);				
 			}
+
+			result.VerifyDates();
+
+			return result;
+		}
+		public static TickMatrix GetData(string[] exchanges, DateTime startDate, DateTime endDate) {
+			TickMatrix result = new TickMatrix();
+			List<string> symbolMasterList = new List<string>();
+			foreach (string exchange in exchanges) {
+				// Get the symbols
+				List<string> symbols = ReadSymbolsFromFile(exchange + "companylist.csv");
+
+				foreach (string symbol in symbols) {
+					try {
+						TickList ticks = GetData(symbol, exchange, startDate, endDate);
+						result.Set(exchange + ":" + symbol, ticks);
+					} catch (Exception ex) {
+						// Maybe theres no data for this symbol.  Screw it.
+					}
+				}
+			}
+
+			result.VerifyDates();
 
 			return result;
 		}
 		
 		// Private methods
-		private static TickList ParseStringData(string symbol, string dataString) {
+		private static TickList ParseStringData(string exchange, string symbol, string dataString, DateTime startDate) {
 			// Split into lines
 			string[] lines = dataString.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
 
 			// Process		
 			var query = from line in lines.Skip(1)
 						let data = line.Split(',')
-						select Tick.FromStringArray(symbol, data);
+						select Tick.FromStringArray(exchange, symbol, data);
 					
-			return TickList.FromIEnumerable(query);
+			return TickList.FromIEnumerable(query, startDate);
+		}
+		private static void WriteToFile(string contents, string fileName) {			
+			using (TextWriter tw = new StreamWriter(File.OpenWrite(fileName))) 
+				tw.Write(contents);			
+		}
+		private static string ReadFromFile(string fileName) {
+			using (TextReader tr = new StreamReader(File.OpenRead(fileName))) 
+				return tr.ReadToEnd();
+		}
+		private static List<string> ReadSymbolsFromFile(string fileName) {
+			List<string> symbols = new List<string>();
+			using (TextFieldParser csvParser = new TextFieldParser(fileName) {
+				TextFieldType = FieldType.Delimited,
+				Delimiters = new string[] { "," },
+				HasFieldsEnclosedInQuotes = true,
+				CommentTokens = new string[] { "\"Symbol\"" }
+			}) {				
+				
+				while (!csvParser.EndOfData) {
+					string[] fields = csvParser.ReadFields();
+					symbols.Add(fields[0]);
+				}
+			}
+
+			return symbols;
+
+
+
+			/*
+			 * string contents = File.ReadAllText(fileName);
+			// Each row has a ticker as the first entry
+			string[] rows = contents.Split(new char[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+
+			// Skip the first row
+			string[] result = new string[rows.Length];
+			for (int i = 1; i < rows.Length; i++) {
+				result[i-1] = rows[i].Split(',')[0].Replace('"', '');
+			}
+
+			*/
 		}
 	}
 }
