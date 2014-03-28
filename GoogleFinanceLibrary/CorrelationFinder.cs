@@ -8,24 +8,27 @@ using MathNet.Numerics.Statistics;
 
 namespace GoogleFinanceLibrary {
 	public class CorrelationFinder {
-		public class CorrelationResult : IComparable<CorrelationResult> {
-			public double Coefficient { get; set; }
+		public class CorrelationResult /*: IComparable<CorrelationResult> */{
+			//public double Coefficient { get; set; }
+			public double PositiveSignAgreementPercent { get; set; }
+			public double NegativeSignAgreementPercent { get; set; }
 			public string PredictorSymbol { get; set; }
 			public string PredicteeSymbol { get; set; }
 			public int FutureDays { get; set; }
 			public override string ToString() {
-				return Math.Round(this.Coefficient, 2).ToString();
+				return string.Format("{0} -> {1}, {2} days: Positive%: {3}, Negative%: {4}", PredictorSymbol, PredicteeSymbol, FutureDays, 
+					Math.Round(PositiveSignAgreementPercent), Math.Round(NegativeSignAgreementPercent));				
 			}
-
+			/*
 			#region IComparable<CorrelationResult> Members
 
 			public int CompareTo(CorrelationResult other) {
 				return this.Coefficient.CompareTo(other.Coefficient);
 			}
 
-			#endregion
+			#endregion*/
 		}
-		public class CorrelationResultList : List<CorrelationResult> {
+		/*public class CorrelationResultList : List<CorrelationResult> {
 			// Index is the future days
 			public override string ToString() {
 				string result = "";
@@ -34,22 +37,16 @@ namespace GoogleFinanceLibrary {
 
 				return result;
 			}
-		}
+		}*/
 		
 		
 
 		// Private members
-		private static readonly DateTime endDate = new DateTime(2014, 3, 24);
-		private static readonly DateTime startDate = DateTime.Now.AddMonths(-3);
-		/*private static readonly string[] symbols = new string[]{ 
-			"TSLA", 
-			"NFLX", 
-			"FB",
-			"RUT", 
-			"IBB" };*/
-		private static readonly string[] exchanges = new string[] { "AMEX" };
-
+		private static readonly DateTime endDate = new DateTime(2014, 3, 25);
+		private static readonly DateTime startDate = endDate.AddMonths(-3);
+		private static readonly string[] exchanges = new string[] { "NYSE" };
 		private static readonly int[] futureDays = Enumerable.Range(1, 3).ToArray();
+		private static readonly double changePercentThreshold = 0.5;
 		
 		// Public methods
 		public static string Find() {
@@ -60,21 +57,26 @@ namespace GoogleFinanceLibrary {
 			string[] symbols = tickData.GetAllSymbols().ToArray();
 
 			// Compare each symbol to each other symbol
-			for (int i = 0; i < symbols.Length; i++) {					
+			for (int i = 0; i < symbols.Length; i++) {
 				TickList predictorAxis = tickData.GetMultiple(symbols[i]);
 
-				for (int j = 0; j < symbols.Length; j++) {					
+				for (int j = 0; j < symbols.Length; j++) {
 					TickList predicteeAxis = tickData.GetMultiple(symbols[j]);
 					//result[i, j] = new CorrelationResultList();
 
 					// Try each future day					
-					foreach (int futureDay in futureDays){
+					foreach (int futureDay in futureDays) {
 						double[] predictorTicks = predictorAxis.GetChangeExcludingEndDays(futureDay);
 						double[] predicteeTicks = predicteeAxis.GetChangeExcludingStartDays(futureDay);
-						double correlation = Correlation.Pearson(predictorTicks, predicteeTicks);
+						//double correlation = Correlation.Pearson(predictorTicks, predicteeTicks);
+						//double correlation = FinanceMath.GetSignAgreementPercent(predictorTicks, predicteeTicks);
+						double positiveCorrelationPercent, negativeCorrelationPercent;
+						FinanceMath.GetInterestingSignAgreementPercent(predictorTicks, predicteeTicks, changePercentThreshold, out positiveCorrelationPercent, out negativeCorrelationPercent);
 
-						CorrelationResult cr = new CorrelationResult() { 
-							Coefficient = correlation,
+						CorrelationResult cr = new CorrelationResult() {
+							//Coefficient = correlation,
+							PositiveSignAgreementPercent = positiveCorrelationPercent,
+							NegativeSignAgreementPercent = negativeCorrelationPercent,
 							PredictorSymbol = symbols[i],
 							PredicteeSymbol = symbols[j],
 							FutureDays = futureDay
@@ -82,18 +84,16 @@ namespace GoogleFinanceLibrary {
 
 						// Put the result into the matrix
 						//result[i, j].Insert(futureDay, cr);					
-						
+
 						// Put the result into a linear list for sorting
-						linearResultList.Add(cr);
+						if ((cr.PositiveSignAgreementPercent >= 50) || (cr.NegativeSignAgreementPercent >= 50))
+							linearResultList.Add(cr);
 					}
 				}
-			}
-
-			// Sort the linear results
-			linearResultList.Sort();			
+			}					
 
 			//return StringifyMatrix(result);
-			return StringifyLinearList(linearResultList);
+			return StringifyLinearList(linearResultList, 50);
 		}
 
 		// Private methods
@@ -125,13 +125,21 @@ namespace GoogleFinanceLibrary {
 
 			return sb.ToString();
 		}*/
-		private static string StringifyLinearList(List<CorrelationResult> resultList) {
-			StringBuilder sb = new StringBuilder();
+		private static string StringifyLinearList(List<CorrelationResult> resultList, int topBottomCount) {
+			// Only care about top and bottom correlations
+			/*
+			resultList.Sort();
+			List<CorrelationResult> interestingResults = resultList.Take(topBottomCount).ToList();
+			interestingResults.AddRange(resultList.Skip(resultList.Count - topBottomCount));
+			 * */
 
-			foreach (CorrelationResult cr in resultList) {
-				sb.AppendFormat("{0} -> {1}, {2} days: {3}", cr.PredictorSymbol, cr.PredicteeSymbol, cr.FutureDays, Math.Round(cr.Coefficient));
-				sb.AppendLine();
-			}
+			// Only care about most strongly correlated, in either direction
+			List<CorrelationResult> interestingResults = resultList.OrderByDescending(cr => cr.PositiveSignAgreementPercent).Take(topBottomCount).ToList();
+			interestingResults.AddRange(resultList.OrderByDescending(cr => cr.NegativeSignAgreementPercent).Take(topBottomCount).ToList());
+
+			StringBuilder sb = new StringBuilder();
+			foreach (CorrelationResult cr in interestingResults) 
+				sb.AppendLine(cr.ToString());							
 
 			return sb.ToString();
 		}

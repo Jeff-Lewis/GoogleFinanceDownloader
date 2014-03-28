@@ -11,5 +11,3 @@ C:\Users\xdotiwalla\SkyDrive\Documents\Source\GoogleFinanceDownloader_demo\Googl
 C:\Users\xdotiwalla\SkyDrive\Documents\Source\GoogleFinanceDownloader_demo\GoogleFinanceDownloaderTest\LeaderPrediction\obj\Debug\MarketAnalyzer.Properties.Resources.resources
 C:\Users\xdotiwalla\SkyDrive\Documents\Source\GoogleFinanceDownloader_demo\GoogleFinanceDownloaderTest\LeaderPrediction\obj\Debug\MarketAnalyzer.exe
 C:\Users\xdotiwalla\SkyDrive\Documents\Source\GoogleFinanceDownloader_demo\GoogleFinanceDownloaderTest\LeaderPrediction\obj\Debug\MarketAnalyzer.pdb
-C:\Users\xdotiwalla\SkyDrive\Documents\Source\GoogleFinanceDownloader_demo\GoogleFinanceDownloaderTest\LeaderPrediction\bin\Debug\MathNet.Numerics.dll
-C:\Users\xdotiwalla\SkyDrive\Documents\Source\GoogleFinanceDownloader_demo\GoogleFinanceDownloaderTest\LeaderPrediction\bin\Debug\MathNet.Numerics.pdb

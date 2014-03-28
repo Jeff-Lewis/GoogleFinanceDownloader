@@ -13,10 +13,14 @@ namespace GoogleFinanceLibrary {
 		// Public methods
 		public void VerifyDates() {
 			// Ensure all tick lists have the same amount of dates
+			List<string> problemSymbols = GetKeysWithMissingValues<string>(symbolDictionary);
+			RemoveKeys<string, DateTime>(problemSymbols, symbolDictionary, dateDictionary, t => t.SymbolWithExchange);
+
 			// Or that all dates have the same amount of ticks
-			List<DateTime> problemDates = GetDatesWithMissingValues();
-			RemoveDates(problemDates);
-			List<DateTime> newProblemDates = GetDatesWithMissingValues();
+			List<DateTime> problemDates = GetKeysWithMissingValues<DateTime>(dateDictionary);
+			//RemoveDates(problemDates);
+			RemoveKeys<DateTime, string>(problemDates, dateDictionary, symbolDictionary, t => t.Date); 
+			List<DateTime> newProblemDates = GetKeysWithMissingValues<DateTime>(dateDictionary);
 		}
 		public void Add(string symbolWithExchange, DateTime date, Tick tick) {
 			// Add to each dictionary
@@ -69,21 +73,21 @@ namespace GoogleFinanceLibrary {
 			return symbolDictionary.Keys;
 		}
 		
-		// Private methods
-		private List<DateTime> GetDatesWithMissingValues() {
+		// Private methods		
+		private static List<T> GetKeysWithMissingValues<T>(Dictionary<T, TickList> dictionary) {
 			// Find how many ticks each date should have
 			int maxTicks = 0;
-			foreach (TickList tl in dateDictionary.Values)
+			foreach (TickList tl in dictionary.Values)
 				if (tl.Count > maxTicks)
 					maxTicks = tl.Count;
 
 			// See who is lacking
-			List<DateTime> problemDates = new List<DateTime>();
-			foreach (KeyValuePair<DateTime, TickList> keyValue in dateDictionary)
+			List<T> problems = new List<T>();
+			foreach (KeyValuePair<T, TickList> keyValue in dictionary)
 				if (keyValue.Value.Count < maxTicks)
-					problemDates.Add(keyValue.Key);
+					problems.Add(keyValue.Key);
 
-			return problemDates;
+			return problems;
 		}
 		private void RemoveDates(List<DateTime> dates) {
 			foreach (DateTime date in dates) {
@@ -96,6 +100,23 @@ namespace GoogleFinanceLibrary {
 							t.LastTick = t.LastTick.LastTick;						
 										
 					tl.RemoveAll(t => t.Date == date);
+				}
+			}
+		}
+
+		private static void RemoveKeys<TPrimary, TSecondary>(List<TPrimary> keys, Dictionary<TPrimary, TickList> primaryDictionary, Dictionary<TSecondary, TickList> secondaryDictionary,
+			Func<Tick, TPrimary> selector) {
+			foreach (TPrimary key in keys) {
+				primaryDictionary.Remove(key);
+
+				foreach (TickList tl in secondaryDictionary.Values) {
+					// Set the new last time
+					foreach (Tick t in tl)
+						if (selector(t).Equals(key))
+							if (t.LastTick != null)
+								t.LastTick = t.LastTick.LastTick;
+
+					tl.RemoveAll(t => selector(t).Equals(key));
 				}
 			}
 		}

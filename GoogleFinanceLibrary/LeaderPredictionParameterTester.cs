@@ -8,7 +8,7 @@ namespace GoogleFinanceLibrary {
 	public class LeaderPredictionParameterTester {
 		// Constants
 		private static readonly DateTime endDate = DateTime.Now;
-		private static readonly DateTime startDate = DateTime.Now.AddMonths(-3);
+		private static readonly DateTime startDate = endDate.AddMonths(-3);
 		private const string indexTicker = "SPY";
 		private const string exchange = "";
 
