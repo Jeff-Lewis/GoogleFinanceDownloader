@@ -41,7 +41,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CorrelationData.cs" />
     <Compile Include="CorrelationFinder.cs" />
+    <Compile Include="CorrelationResult.cs" />
     <Compile Include="LeaderPrediction.cs" />
     <Compile Include="LeaderPredictionParameterTester.cs" />
     <Compile Include="FinanceMath.cs" />
@@ -57,10 +59,6 @@
     <None Include="app.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\..\..\Documents\GitHub\mathnet-numerics\src\Numerics\Numerics.csproj">
-      <Project>{b7cae5f4-a23f-4438-b5be-41226618b695}</Project>
-      <Name>Numerics</Name>
-    </ProjectReference>
     <ProjectReference Include="..\GoogleFinanceDownloader\GoogleFinanceDownloader.csproj">
       <Project>{a32af31f-daa1-4b65-af42-dde349b89e2d}</Project>
       <Name>GoogleFinanceDownloader</Name>

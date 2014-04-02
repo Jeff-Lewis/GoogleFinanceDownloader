@@ -23,15 +23,12 @@ namespace GoogleFinanceDownloader.Properties {
             }
         }
         
-        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("http://www.google.com/finance/getprices")]
         public string GET_PRICES_METHOD_URI_BEGINNING {
             get {
                 return ((string)(this["GET_PRICES_METHOD_URI_BEGINNING"]));
-            }
-            set {
-                this["GET_PRICES_METHOD_URI_BEGINNING"] = value;
             }
         }
     }

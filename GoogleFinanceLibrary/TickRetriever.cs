@@ -15,9 +15,10 @@ namespace GoogleFinanceLibrary {
 		private static Dictionary<string, TickList> tickCache = new Dictionary<string, TickList>();
 
 		// Public methods		
-		public static TickList GetData(string symbol, string exchange, DateTime startDate, DateTime endDate) {
+		public static TickList GetData(string symbol, string exchange, DateTime startDate, DateTime endDate, string dataFolder) {
 			// If we already have the data, dont get it again					
-			string fileName = (exchange + symbol + startDate.ToShortDateString() + endDate.ToShortDateString()).Replace('/', '_');
+			string file = (exchange + symbol + startDate.ToShortDateString() + endDate.ToShortDateString()).Replace('/', '_');
+			string fileName = Path.Combine(dataFolder, file);
 			string resultValue;
 
 			if (File.Exists(fileName))
@@ -49,11 +50,11 @@ namespace GoogleFinanceLibrary {
 
 			return result;
 		}
-		public static TickMatrix GetData(string[] symbolArray, string exchange, DateTime startDate, DateTime endDate) {			
+		public static TickMatrix GetData(string[] symbolArray, string exchange, DateTime startDate, DateTime endDate, string dataFolder) {			
 			TickMatrix result = new TickMatrix();
 
 			foreach (string symbol in symbolArray) {
-				TickList ticks = GetData(symbol, exchange, startDate, endDate);
+				TickList ticks = GetData(symbol, exchange, startDate, endDate, dataFolder);
 				result.Set(exchange + ":" + symbol, ticks);				
 			}
 
@@ -61,21 +62,25 @@ namespace GoogleFinanceLibrary {
 
 			return result;
 		}
-		public static TickMatrix GetData(string[] exchanges, DateTime startDate, DateTime endDate) {
+		public static TickMatrix GetData(string[] exchanges, DateTime startDate, DateTime endDate, string dataFolder) {
 			TickMatrix result = new TickMatrix();
 			List<string> symbolMasterList = new List<string>();
 			foreach (string exchange in exchanges) {
 				// Get the symbols
-				List<string> symbols = ReadSymbolsFromFile(exchange + "companylist.csv");
+				List<string> symbols = ReadSymbolsFromFile(exchange + "companylist.csv", dataFolder);
 
+				int failedSymbolCount = 0;
 				foreach (string symbol in symbols) {
 					try {
-						TickList ticks = GetData(symbol, exchange, startDate, endDate);
+						TickList ticks = GetData(symbol, exchange, startDate, endDate, dataFolder);
 						result.Set(exchange + ":" + symbol, ticks);
 					} catch (Exception ex) {
 						// Maybe theres no data for this symbol.  Screw it.
+						failedSymbolCount++;
 					}
 				}
+
+				object o = failedSymbolCount;
 			}
 
 			result.VerifyDates();
@@ -103,7 +108,9 @@ namespace GoogleFinanceLibrary {
 			using (TextReader tr = new StreamReader(File.OpenRead(fileName))) 
 				return tr.ReadToEnd();
 		}
-		private static List<string> ReadSymbolsFromFile(string fileName) {
+		private static List<string> ReadSymbolsFromFile(string file, string dataFolder) {
+			string fileName = Path.Combine(dataFolder, file);
+
 			List<string> symbols = new List<string>();
 			using (TextFieldParser csvParser = new TextFieldParser(fileName) {
 				TextFieldType = FieldType.Delimited,
@@ -119,21 +126,6 @@ namespace GoogleFinanceLibrary {
 			}
 
 			return symbols;
-
-
-
-			/*
-			 * string contents = File.ReadAllText(fileName);
-			// Each row has a ticker as the first entry
-			string[] rows = contents.Split(new char[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
-
-			// Skip the first row
-			string[] result = new string[rows.Length];
-			for (int i = 1; i < rows.Length; i++) {
-				result[i-1] = rows[i].Split(',')[0].Replace('"', '');
-			}
-
-			*/
 		}
 	}
 }

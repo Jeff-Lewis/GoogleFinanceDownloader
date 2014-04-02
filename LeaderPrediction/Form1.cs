@@ -16,8 +16,8 @@ namespace MarketAnalyzer {
 		}
 
 		private void button1_Click(object sender, EventArgs e) {
-			string result = CorrelationFinder.Find();
-			richTextBox1.Text = result;
+			//string result = CorrelationFinder.StringifyLinearList(CorrelationFinder.Find());
+			//richTextBox1.Text = result;
 		}
 	}
 }

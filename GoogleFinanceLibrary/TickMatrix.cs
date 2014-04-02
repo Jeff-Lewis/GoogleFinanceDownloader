@@ -13,12 +13,12 @@ namespace GoogleFinanceLibrary {
 		// Public methods
 		public void VerifyDates() {
 			// Ensure all tick lists have the same amount of dates
+			/*
 			List<string> problemSymbols = GetKeysWithMissingValues<string>(symbolDictionary);
 			RemoveKeys<string, DateTime>(problemSymbols, symbolDictionary, dateDictionary, t => t.SymbolWithExchange);
-
+			*/
 			// Or that all dates have the same amount of ticks
-			List<DateTime> problemDates = GetKeysWithMissingValues<DateTime>(dateDictionary);
-			//RemoveDates(problemDates);
+			List<DateTime> problemDates = GetKeysWithMissingValues<DateTime>(dateDictionary);			
 			RemoveKeys<DateTime, string>(problemDates, dateDictionary, symbolDictionary, t => t.Date); 
 			List<DateTime> newProblemDates = GetKeysWithMissingValues<DateTime>(dateDictionary);
 		}

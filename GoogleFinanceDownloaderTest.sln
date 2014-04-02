@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarketAnalyzer", "LeaderPre
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GoogleFinanceLibrary", "GoogleFinanceLibrary\GoogleFinanceLibrary.csproj", "{A74592CC-66CD-41F1-8837-F4D1D387AD43}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Numerics", "..\..\..\..\..\Documents\GitHub\mathnet-numerics\src\Numerics\Numerics.csproj", "{B7CAE5F4-A23F-4438-B5BE-41226618B695}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarketAnalyzerWeb", "MarketAnalyzerWeb\MarketAnalyzerWeb.csproj", "{720E9D95-3302-4C34-ABA6-86DB0119F1A9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -42,12 +42,12 @@ Global
 		{A74592CC-66CD-41F1-8837-F4D1D387AD43}.Release|Any CPU.Build.0 = Release|Any CPU
 		{A74592CC-66CD-41F1-8837-F4D1D387AD43}.Release-Signed|Any CPU.ActiveCfg = Release|Any CPU
 		{A74592CC-66CD-41F1-8837-F4D1D387AD43}.Release-Signed|Any CPU.Build.0 = Release|Any CPU
-		{B7CAE5F4-A23F-4438-B5BE-41226618B695}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B7CAE5F4-A23F-4438-B5BE-41226618B695}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B7CAE5F4-A23F-4438-B5BE-41226618B695}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B7CAE5F4-A23F-4438-B5BE-41226618B695}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B7CAE5F4-A23F-4438-B5BE-41226618B695}.Release-Signed|Any CPU.ActiveCfg = Release-Signed|Any CPU
-		{B7CAE5F4-A23F-4438-B5BE-41226618B695}.Release-Signed|Any CPU.Build.0 = Release-Signed|Any CPU
+		{720E9D95-3302-4C34-ABA6-86DB0119F1A9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{720E9D95-3302-4C34-ABA6-86DB0119F1A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{720E9D95-3302-4C34-ABA6-86DB0119F1A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{720E9D95-3302-4C34-ABA6-86DB0119F1A9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{720E9D95-3302-4C34-ABA6-86DB0119F1A9}.Release-Signed|Any CPU.ActiveCfg = Release|Any CPU
+		{720E9D95-3302-4C34-ABA6-86DB0119F1A9}.Release-Signed|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

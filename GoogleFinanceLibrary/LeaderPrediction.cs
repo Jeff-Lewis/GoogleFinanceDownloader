@@ -10,7 +10,7 @@ using GoogleFinanceDownloader;
 namespace GoogleFinanceLibrary
 {
     public class LeaderPrediction
-    {
+    {/*
 		// Public methods
 		public static PredictionDictionary Predict(string[] leaderTickerArray, string indexTicker, string exchange, DateTime startDate, DateTime endDate, int leaderWindowDays, int futureDays) {
 			// Get leader ticker data
@@ -23,9 +23,8 @@ namespace GoogleFinanceLibrary
 			
 			return result;
 		}
-
-		// Private methods
-		
+		*/
+		// Private methods		
 		private static PredictionDictionary GetPredictions(TickMatrix leaderTicks, TickList indexTicks, int leaderWindowDays, int futureDays) {
 			// Check slope of lead data against future slope of index data			
 			PredictionDictionary result = new PredictionDictionary();

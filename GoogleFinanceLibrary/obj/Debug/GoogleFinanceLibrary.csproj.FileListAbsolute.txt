@@ -6,5 +6,3 @@ C:\Users\xdotiwalla\SkyDrive\Documents\Source\GoogleFinanceDownloader_demo\Googl
 C:\Users\xdotiwalla\SkyDrive\Documents\Source\GoogleFinanceDownloader_demo\GoogleFinanceDownloaderTest\GoogleFinanceLibrary\bin\Debug\GoogleFinanceDownloader.pdb
 C:\Users\xdotiwalla\SkyDrive\Documents\Source\GoogleFinanceDownloader_demo\GoogleFinanceDownloaderTest\GoogleFinanceLibrary\obj\Debug\GoogleFinanceLibrary.dll
 C:\Users\xdotiwalla\SkyDrive\Documents\Source\GoogleFinanceDownloader_demo\GoogleFinanceDownloaderTest\GoogleFinanceLibrary\obj\Debug\GoogleFinanceLibrary.pdb
-C:\Users\xdotiwalla\SkyDrive\Documents\Source\GoogleFinanceDownloader_demo\GoogleFinanceDownloaderTest\GoogleFinanceLibrary\bin\Debug\MathNet.Numerics.dll
-C:\Users\xdotiwalla\SkyDrive\Documents\Source\GoogleFinanceDownloader_demo\GoogleFinanceDownloaderTest\GoogleFinanceLibrary\bin\Debug\MathNet.Numerics.pdb

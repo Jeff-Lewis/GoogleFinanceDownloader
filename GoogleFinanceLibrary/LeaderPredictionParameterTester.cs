@@ -21,6 +21,7 @@ namespace GoogleFinanceLibrary {
 		private static int[] windowDays = Enumerable.Range(1, 20).ToArray();
 		private static int[] futureDays = Enumerable.Range(1, 20).ToArray();
 
+		/*
 		// Public methods
 		public static string Test() {
 			// Run all combinations of tests
@@ -40,5 +41,6 @@ namespace GoogleFinanceLibrary {
 
 			return sb.AppendLine().ToString();
 		}
+		*/
 	}
 }
