@@ -58,7 +58,7 @@ namespace GoogleFinanceLibrary {
 				result.Set(exchange + ":" + symbol, ticks);				
 			}
 
-			result.VerifyDates();
+			//result.VerifyDates();
 
 			return result;
 		}
@@ -83,7 +83,7 @@ namespace GoogleFinanceLibrary {
 				object o = failedSymbolCount;
 			}
 
-			result.VerifyDates();
+			//result.VerifyDates();
 
 			return result;
 		}

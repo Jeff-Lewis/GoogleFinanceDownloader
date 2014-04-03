@@ -22,7 +22,7 @@ namespace GoogleFinanceLibrary {
 		}
 
 		// Public methods
-		public TickList GetSubsetByDate(DateTime startDate, int days) {
+		/*public TickList GetSubsetByDate(DateTime startDate, int days) {
 			int index = GetFutureIndex(startDate, 0);
 			return TickList.FromIEnumerable(this.GetRange(index, days), startDate);
 		}
@@ -36,13 +36,19 @@ namespace GoogleFinanceLibrary {
 			} catch (Exception ex) {
 				throw new Exception("No future tick exists", ex);
 			}
+		}*/
+		public double[] GetData(Func<Tick, double> selector) {
+			return GetDataExcludingEndDays(0, selector);
 		}
 		public double[] GetDataExcludingEndDays(int days, Func<Tick, double> selector) {
 			return this.Take(this.Count - days).Select(selector).ToArray();
 		}
 		public double[] GetDataExcludingStartDays(int days, Func<Tick, double> selector) {
 			return this.Skip(days).Select(selector).ToArray();
-		}		
+		}
+		public Tick GetTickByDate(DateTime date) {
+			return this.FirstOrDefault(t => t.Date == date);
+		}
 
 		// Private methods
 		private int GetFutureIndex(DateTime startDate, int days) {

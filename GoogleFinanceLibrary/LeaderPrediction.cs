@@ -25,6 +25,7 @@ namespace GoogleFinanceLibrary
 		}
 		*/
 		// Private methods		
+		/*
 		private static PredictionDictionary GetPredictions(TickMatrix leaderTicks, TickList indexTicks, int leaderWindowDays, int futureDays) {
 			// Check slope of lead data against future slope of index data			
 			PredictionDictionary result = new PredictionDictionary();
@@ -53,6 +54,7 @@ namespace GoogleFinanceLibrary
 			}
 
 			return result;
-		}		
+		}	
+		*/
     }
 }

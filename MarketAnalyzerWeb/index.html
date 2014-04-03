@@ -1,0 +1,118 @@
+﻿<!DOCTYPE html>
+<link href="style/bootstrap.css" rel="stylesheet" />
+
+<html xmlns="http://www.w3.org/1999/xhtml">    
+<head>
+  <title>Correlations</title>
+</head>
+<body>   
+
+    <div class="container-fluid">
+         <div class="row">
+              <div class="col-md-4">
+                <h2>Correlations</h2>
+                <ul id="correlationList" />
+              </div>
+
+              <div class="col-md-8">
+                  <div id="chart_div"></div>
+                  <div id="raw_chart_div"></div>
+              </div>
+        </div>
+    </div>  
+
+  <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-2.0.3.min.js"></script>
+  <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+  <script type="text/javascript">        
+ 
+     // Load the Visualization API and the piechart package.
+     google.load('visualization', '1.0', { 'packages': ['corechart'] });
+
+     $(document).ready(function () {
+         var uri = 'api/correlations';
+          // Send an AJAX request
+          $.getJSON(uri)
+              .done(function (data) {
+                  // On success, 'data' contains a list of products.
+                  $.each(data, function (key, item) {
+                      // Add a list item for the product.
+                      $('<li>', { text: formatItem(item) }).attr('data-item', JSON.stringify(item)).click(createChart).appendTo($('#correlationList'));
+                  });
+              })
+              .fail(ajaxFail);
+      });
+
+      function formatItem(item) {          
+          return item.PredictorSymbol + " -> " + item.PredicteeSymbol + ", days: " + item.FutureDays
+              + ", Positive%: " + item.PositiveSignAgreementPercent + ", Negative%: " + item.NegativeSignAgreementPercent;
+      }
+
+      function createChart() {
+          // Form link
+          var item = JSON.parse($(this).attr('data-item'));        
+         
+          // Create chart
+          drawChart(item.PredictorSymbol, item.PredictorTicks, item.PredicteeSymbol, item.PredicteeTicks);
+
+          // Draw raw chart
+          var rawUri = 'api/correlation/' + item.PredictorSymbol.replace(':', '_') + '/' + item.PredicteeSymbol.replace(':', '_') + '/' + item.FutureDays;
+          $.getJSON(rawUri).done(drawRawChart).fail(ajaxFail);
+      }
+
+      function drawChart(predictorSymbol, predictorArray, predicteeSymbol, predicteeArray) {
+          // Create the data table.
+          var data = new google.visualization.DataTable();
+          data.addColumn('number', 'Time');
+          data.addColumn('number', 'PredictorTicks ' + predictorSymbol);
+          data.addColumn('number', 'PredicteeTicks ' + predicteeSymbol);
+
+          for (var i = 0; i < predictorArray.length; i++) {              
+              data.addRow([i, predictorArray[i], predicteeArray[i]]);
+          }
+          
+          // Set chart options
+          var options = {
+              title: 'Predictor: ' + predictorSymbol + ' Predictee: ' + predicteeSymbol,
+              height: 500,
+              legend: { position: 'bottom' }
+          };
+
+          // Instantiate and draw our chart, passing in some options.
+          var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
+          chart.draw(data, options);
+      }
+
+      function drawRawChart(callbackData) {
+          var data = new google.visualization.DataTable();
+          data.addColumn('number', 'Time');
+          data.addColumn('number', 'PredictorTicks');
+          data.addColumn('number', 'PredicteeTicks');
+
+          for (var i = 0; i < callbackData.PredictorClosePrices.length; i++) {
+              data.addRow([i, callbackData.PredictorClosePrices[i], callbackData.PredicteeClosePrices[i]]);
+          }
+
+          var options = {              
+              height: 500,
+              legend: { position: 'bottom' },
+              series: {
+                  0: { targetAxisIndex: 0 },
+                  1: { targetAxisIndex: 1 }
+              },
+              vAxes: {
+                  0: { title: 'Predictor' },
+                  1: { title: 'Predictee' }
+              }
+          };
+
+          var chart = new google.visualization.LineChart(document.getElementById('raw_chart_div'));
+          chart.draw(data, options);
+      }
+
+      function ajaxFail(jqXHR, textStatus, err){
+          $('#correlationList').text('Error: ' + err);
+      }
+     
+  </script>
+</body>
+</html>
