@@ -1,6 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 2013
+VisualStudioVersion = 12.0.21005.1
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GoogleFinanceDownloaderTest", "GoogleFinanceDownloaderTest\GoogleFinanceDownloaderTest.csproj", "{8DD0F3BB-4F3D-4B52-9D5F-DD3EF7F4224D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GoogleFinanceDownloader", "GoogleFinanceDownloader\GoogleFinanceDownloader.csproj", "{A32AF31F-DAA1-4B65-AF42-DDE349B89E2D}"
@@ -10,6 +12,12 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GoogleFinanceLibrary", "GoogleFinanceLibrary\GoogleFinanceLibrary.csproj", "{A74592CC-66CD-41F1-8837-F4D1D387AD43}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarketAnalyzerWeb", "MarketAnalyzerWeb\MarketAnalyzerWeb.csproj", "{720E9D95-3302-4C34-ABA6-86DB0119F1A9}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{81BC4EA3-8B72-4CAC-B81A-8F32278056ED}"
+	ProjectSection(SolutionItems) = preProject
+		Performance1.psess = Performance1.psess
+		Performance2.psess = Performance2.psess
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,5 +59,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(Performance) = preSolution
+		HasPerformanceSessions = true
 	EndGlobalSection
 EndGlobal

@@ -20,7 +20,6 @@ namespace GoogleFinanceLibrary {
 
 			return result;
 		}
-
 		// Public methods
 		/*public TickList GetSubsetByDate(DateTime startDate, int days) {
 			int index = GetFutureIndex(startDate, 0);
@@ -51,10 +50,10 @@ namespace GoogleFinanceLibrary {
 		}
 
 		// Private methods
-		private int GetFutureIndex(DateTime startDate, int days) {
+		/*private int GetFutureIndex(DateTime startDate, int days) {
 			// Move to the starting point
 			int startIndex = this.FindIndex(t => t.Date == startDate);
 			return startIndex + days;
-		}
+		}*/
 	}
 }

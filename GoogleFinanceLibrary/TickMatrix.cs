@@ -82,30 +82,15 @@ namespace GoogleFinanceLibrary {
 			// Compare each symbol to each other symbol
 			for (int i = 0; i < symbols.Length; i++) {
 				TickList predictorAxis = GetMultiple(symbols[i]);
+				predictorAxis.Sort();				
 
 				for (int j = 0; j < symbols.Length; j++) {
 					TickList predicteeAxis = GetMultiple(symbols[j]);
+					predicteeAxis.Sort();
 
 					// Try each future day					
 					foreach (int futureDay in futureDayArray) {
 						CorrelationResult cr = GetCorrelation(predictorAxis, predicteeAxis, futureDay, changePercentThreshold);
-
-						/*
-						double[] predictorTicks = predictorAxis.GetDataExcludingEndDays(futureDay, t => t.GetChangePercent(true));
-						double[] predicteeTicks = predicteeAxis.GetDataExcludingStartDays(futureDay, t => t.GetChangePercent(false));
-						double positiveCorrelationPercent, negativeCorrelationPercent;
-						FinanceMath.GetInterestingSignAgreementPercent(predictorTicks, predicteeTicks, changePercentThreshold, out positiveCorrelationPercent, out negativeCorrelationPercent);
-
-						CorrelationResult cr = new CorrelationResult() {							
-							PositiveSignAgreementPercent = Math.Round(positiveCorrelationPercent, 2),
-							NegativeSignAgreementPercent = Math.Round(negativeCorrelationPercent, 2),
-							PredictorSymbol = symbols[i],
-							PredictorTicks = predictorTicks,
-							PredicteeSymbol = symbols[j],
-							PredicteeTicks = predicteeTicks,
-							FutureDays = futureDay
-						};
-						*/
 
 						// Put the result into a linear list for sorting
 						if ((cr.PositiveSignAgreementPercent >= interestingPercentCutoff) || (cr.NegativeSignAgreementPercent >= interestingPercentCutoff))
@@ -123,10 +108,6 @@ namespace GoogleFinanceLibrary {
 		
 		// Private methods		
 		private static CorrelationResult GetCorrelation(TickList predictorAxis, TickList predicteeAxis, int futureDays, double thresholdPercent) {
-			// Ensure ticks are sorted
-			predictorAxis.Sort();
-			predicteeAxis.Sort();
-
 			int positiveAgreementCount = 0;
 			int negativeAgreementCount = 0;
 
@@ -137,10 +118,11 @@ namespace GoogleFinanceLibrary {
 				if (futureDateIndex >= predictorAxis.Count)
 					continue;
 	
-				Tick predictorTick = predictorAxis[futureDateIndex];
+				Tick predictorTick = predictorAxis[i];
+				DateTime futureDate = predictorAxis[futureDateIndex].Date;
 
 				// Get the corresponding date for the predictee
-				Tick predicteeTick = predicteeAxis.GetTickByDate(predictorTick.Date);
+				Tick predicteeTick = predicteeAxis.GetTickByDate(futureDate);
 				if (predicteeTick == null)
 					continue;
 		

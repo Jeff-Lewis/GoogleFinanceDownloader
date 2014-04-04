@@ -12,7 +12,7 @@ namespace GoogleFinanceLibrary {
 		// Private members
 		private static readonly DateTime endDate = new DateTime(2014, 3, 25);
 		private static readonly DateTime startDate = endDate.AddMonths(-3);
-		private static readonly string[] exchanges = new string[] { "NYSE", "NASDAQ" /*, "CURRENCY"*/ };
+		private static readonly string[] exchanges = new string[] { "NYSE" /*, "NASDAQ", "CURRENCY"*/ };
 		private static readonly int[] futureDays = Enumerable.Range(1, 3).ToArray();
 		private static readonly double changePercentThreshold = 0.3;
 		private static readonly int topBottomCount = 50;

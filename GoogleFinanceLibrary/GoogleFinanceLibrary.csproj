@@ -47,8 +47,6 @@
     <Compile Include="LeaderPrediction.cs" />
     <Compile Include="LeaderPredictionParameterTester.cs" />
     <Compile Include="FinanceMath.cs" />
-    <Compile Include="Prediction.cs" />
-    <Compile Include="PredictionDictionary.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Tick.cs" />
     <Compile Include="TickList.cs" />
