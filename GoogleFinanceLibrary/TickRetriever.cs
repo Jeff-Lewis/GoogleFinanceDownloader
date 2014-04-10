@@ -13,7 +13,7 @@ namespace GoogleFinanceLibrary {
 	public class TickRetriever {
 		// Private members
 		private static Dictionary<string, TickList> tickCache = new Dictionary<string, TickList>();
-
+				
 		// Public methods		
 		public static TickList GetData(string symbol, string exchange, DateTime startDate, DateTime endDate, string dataFolder) {
 			// If we already have the data, dont get it again					
@@ -50,18 +50,6 @@ namespace GoogleFinanceLibrary {
 
 			return result;
 		}
-		public static TickMatrix GetData(string[] symbolArray, string exchange, DateTime startDate, DateTime endDate, string dataFolder) {			
-			TickMatrix result = new TickMatrix();
-
-			foreach (string symbol in symbolArray) {
-				TickList ticks = GetData(symbol, exchange, startDate, endDate, dataFolder);
-				result.Set(exchange + ":" + symbol, ticks);				
-			}
-
-			//result.VerifyDates();
-
-			return result;
-		}
 		public static TickMatrix GetData(string[] exchanges, DateTime startDate, DateTime endDate, string dataFolder) {
 			TickMatrix result = new TickMatrix();
 			List<string> symbolMasterList = new List<string>();
@@ -72,7 +60,7 @@ namespace GoogleFinanceLibrary {
 				int failedSymbolCount = 0;
 				foreach (string symbol in symbols) {
 					try {
-						TickList ticks = GetData(symbol, exchange, startDate, endDate, dataFolder);
+						TickList ticks = GetData(symbol, exchange, startDate, endDate, dataFolder);						
 						result.Set(exchange + ":" + symbol, ticks);
 					} catch (Exception ex) {
 						// Maybe theres no data for this symbol.  Screw it.
@@ -80,10 +68,9 @@ namespace GoogleFinanceLibrary {
 					}
 				}
 
+				// TODO: Remove this
 				object o = failedSymbolCount;
-			}
-
-			//result.VerifyDates();
+			}			
 
 			return result;
 		}
@@ -116,7 +103,7 @@ namespace GoogleFinanceLibrary {
 				TextFieldType = FieldType.Delimited,
 				Delimiters = new string[] { "," },
 				HasFieldsEnclosedInQuotes = true,
-				CommentTokens = new string[] { "\"Symbol\"" }
+				CommentTokens = new string[] { "\"Symbol\"", "Symbol" }
 			}) {				
 				
 				while (!csvParser.EndOfData) {

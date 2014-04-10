@@ -13,21 +13,11 @@ namespace GoogleFinanceLibrary {
 		public int FutureDays { get; set; }
 		public double[] PredictorTicks { get; set; }
 		public double[] PredicteeTicks { get; set; }
+		public int CheckedTickCount { get; set; }
+		public Dictionary<DateTime, Tuple<double, double>> ComparedTickPercentChanges { get; set; }
 		public override string ToString() {
 			return string.Format("{0} -> {1}, {2} days: Positive%: {3}, Negative%: {4}", PredictorSymbol, PredicteeSymbol, FutureDays,
 				Math.Round(PositiveSignAgreementPercent), Math.Round(NegativeSignAgreementPercent));
-		}
-
-		public static CorrelationResult GetNoCorrelationResult(string predictorSymbol, string predicteeSymbol, int futureDays) {
-			return new CorrelationResult() {
-				FutureDays = futureDays,
-				NegativeSignAgreementPercent = 0,
-				PositiveSignAgreementPercent = 0,
-				PredictorSymbol = predictorSymbol,
-				PredictorTicks = null,
-				PredicteeSymbol = predicteeSymbol,
-				PredicteeTicks = null
-			};
-		}
+		}		
 	}	
 }

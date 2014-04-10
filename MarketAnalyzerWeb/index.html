@@ -44,35 +44,39 @@
 
       function formatItem(item) {          
           return item.PredictorSymbol + " -> " + item.PredicteeSymbol + ", days: " + item.FutureDays
-              + ", Positive%: " + item.PositiveSignAgreementPercent + ", Negative%: " + item.NegativeSignAgreementPercent;
+              + ", Positive%: " + item.PositiveSignAgreementPercent + ", Negative%: " + item.NegativeSignAgreementPercent
+              + ", Checked Ticks: " + item.CheckedTickCount;
       }
 
       function createChart() {
           // Form link
           var item = JSON.parse($(this).attr('data-item'));        
          
-          // Create chart
-          drawChart(item.PredictorSymbol, item.PredictorTicks, item.PredicteeSymbol, item.PredicteeTicks);
+          // Create chart       
+          drawChangeShiftedChart(item.ComparedTickPercentChanges, item.PredictorSymbol, item.PredicteeSymbol, item.FutureDays);
 
           // Draw raw chart
           var rawUri = 'api/correlation/' + item.PredictorSymbol.replace(':', '_') + '/' + item.PredicteeSymbol.replace(':', '_') + '/' + item.FutureDays;
           $.getJSON(rawUri).done(drawRawChart).fail(ajaxFail);
       }
-
-      function drawChart(predictorSymbol, predictorArray, predicteeSymbol, predicteeArray) {
+      
+      function drawChangeShiftedChart(changeDictionary, predictorSymbol, predicteeSymbol, futureDays) {
           // Create the data table.
           var data = new google.visualization.DataTable();
-          data.addColumn('number', 'Time');
+          data.addColumn('date', 'Date');
           data.addColumn('number', 'PredictorTicks ' + predictorSymbol);
           data.addColumn('number', 'PredicteeTicks ' + predicteeSymbol);
 
-          for (var i = 0; i < predictorArray.length; i++) {              
-              data.addRow([i, predictorArray[i], predicteeArray[i]]);
+          //for (var i = 0; i < changeDictionary.length; i++) {              
+          for (var date in changeDictionary) {
+              var tor = changeDictionary[date].m_item1;
+              var tee = changeDictionary[date].m_item2;
+              data.addRow([new Date(Date.parse(date)), changeDictionary[date].m_Item1, changeDictionary[date].m_Item2]);
           }
           
           // Set chart options
           var options = {
-              title: 'Predictor: ' + predictorSymbol + ' Predictee: ' + predicteeSymbol,
+              title: 'Percent Change, shifted by ' + futureDays + ', Predictor: ' + predictorSymbol + ' Predictee: ' + predicteeSymbol,
               height: 500,
               legend: { position: 'bottom' }
           };
@@ -92,7 +96,8 @@
               data.addRow([i, callbackData.PredictorClosePrices[i], callbackData.PredicteeClosePrices[i]]);
           }
 
-          var options = {              
+          var options = {
+              title: 'Raw Values, not shifted',
               height: 500,
               legend: { position: 'bottom' },
               series: {

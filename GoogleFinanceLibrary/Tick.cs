@@ -5,7 +5,10 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace GoogleFinanceLibrary {	
-	public class Tick : IEquatable<Tick>, IComparable<Tick> {
+	public class Tick : IComparable<Tick> {
+		// Constants
+		private const double MinimumInterestingChangePercent = 0.3;
+
 		// Public properties
 		public string SymbolWithExchange { get; private set; }
 		public DateTime Date {get; private set;}
@@ -35,14 +38,13 @@ namespace GoogleFinanceLibrary {
 
 			return Math.Round((ClosePrice - lastPrice) / lastPrice * 100, 2);
 		}
-
-		#region IEquatable<Tick> Members
-
-		public bool Equals(Tick other) {
-			return ((this.SymbolWithExchange == other.SymbolWithExchange) && (this.Date == other.Date));
+		public bool IsChangeInteresting(bool sinceLastClose) {
+			double changePercent = GetChangePercent(sinceLastClose);
+			if (Math.Abs(changePercent) >= MinimumInterestingChangePercent)
+				return true;
+			else
+				return false;
 		}
-
-		#endregion
 
 		#region IComparable<Tick> Members
 

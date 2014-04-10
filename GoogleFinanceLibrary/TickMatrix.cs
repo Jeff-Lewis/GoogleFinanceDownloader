@@ -7,74 +7,23 @@ using System.Threading.Tasks;
 namespace GoogleFinanceLibrary {
 	public class TickMatrix {
 		// Private members
-		private Dictionary<string, TickList> symbolDictionary = new Dictionary<string, TickList>();
-		private Dictionary<DateTime, TickList> dateDictionary = new Dictionary<DateTime, TickList>();
-
-		// Public methods
-		/*
-		public void VerifyDates() {
-			// Ensure all tick lists have the same amount of dates
-			
-			List<string> problemSymbols = GetKeysWithMissingValues<string>(symbolDictionary);
-			RemoveKeys<string, DateTime>(problemSymbols, symbolDictionary, dateDictionary, t => t.SymbolWithExchange);
-			
-			// Or that all dates have the same amount of ticks
-			List<DateTime> problemDates = GetKeysWithMissingValues<DateTime>(dateDictionary);			
-			RemoveKeys<DateTime, string>(problemDates, dateDictionary, symbolDictionary, t => t.Date); 
-			List<DateTime> newProblemDates = GetKeysWithMissingValues<DateTime>(dateDictionary);
-		}
-		*/
-		public void Add(string symbolWithExchange, DateTime date, Tick tick) {
-			// Add to each dictionary
-			if (!symbolDictionary.ContainsKey(symbolWithExchange))
-				symbolDictionary.Add(symbolWithExchange, new TickList());
-			symbolDictionary[symbolWithExchange].Add(tick);
-
-			if (!dateDictionary.ContainsKey(date))
-				dateDictionary.Add(date, new TickList());
-			dateDictionary[date].Add(tick);
-		}
+		private Dictionary<string, TickList> symbolDictionary = new Dictionary<string, TickList>();		
+		
+		// Public methods				
 		public void Set(string symbolWithExchange, TickList tickList) {
 			if (symbolDictionary.ContainsKey(symbolWithExchange))
 				throw new Exception("Already contains ticks for symbol: " + symbolWithExchange);
-						
-			foreach (Tick t in tickList)
-				Add(symbolWithExchange, t.Date, t);
-		}
-		/*public Tick Get(string symbol, DateTime date) {
-			TickList symbolMatches = symbolDictionary[symbol];
-			TickList dateMatches = dateDictionary[date];
 
-			return symbolMatches.Intersect(dateMatches).First();
-		}*/
-		/*public TickList GetMultiple(string symbol, DateTime startDate, int days) {			
-			return GetMultiple(symbol).GetSubsetByDate(startDate, days);			
-		}*/
+			symbolDictionary.Add(symbolWithExchange, tickList);
+		}		
 		public TickList GetMultiple(string symbol) {
 			return symbolDictionary[symbol];
-		}
-		public TickList GetMultiple(DateTime date) {
-			return dateDictionary[date];
-		}
-		public List<DateTime> GetAllDates() {
-			return dateDictionary.Keys.ToList();
 		}		
-		/*public double GetAverageChangeOverDates(string symbol, DateTime startDate, int days) {
-			try {
-				TickList relevantTicks = GetMultiple(symbol, startDate, days);
-				double startValue = relevantTicks.First().LastTick.ClosePrice;
-				double endValue = relevantTicks.Last().ClosePrice;
-				double changePercent = (endValue - startValue) / startValue * 100;
-				return Math.Round(changePercent / days, 2);				
-			} catch (ArgumentException) {
-				// I really need a way to log this
-				return 0;
-			}
-		}*/
 		public IEnumerable<string> GetAllSymbols() {
 			return symbolDictionary.Keys;
 		}
-		public List<CorrelationResult> FindCorrelations(int[] futureDayArray, int topBottomCount, double changePercentThreshold, int interestingPercentCutoff)
+		public List<CorrelationResult> FindCorrelations(int[] futureDayArray, int topBottomCount, double changePercentThreshold, int interestingPercentCutoff, 
+			int minimumInterestingTickPercent, int minimumTicksComparedCount)
 		{
 			List<CorrelationResult> linearResultList = new List<CorrelationResult>();				
 			string[] symbols = GetAllSymbols().ToArray();
@@ -82,15 +31,22 @@ namespace GoogleFinanceLibrary {
 			// Compare each symbol to each other symbol
 			for (int i = 0; i < symbols.Length; i++) {
 				TickList predictorAxis = GetMultiple(symbols[i]);
-				predictorAxis.Sort();				
+
+				if ((predictorAxis.InterestingTickPercent <= minimumInterestingTickPercent) || (predictorAxis.Count < 1))
+					continue;
 
 				for (int j = 0; j < symbols.Length; j++) {
 					TickList predicteeAxis = GetMultiple(symbols[j]);
-					predicteeAxis.Sort();
+
+					if ((predicteeAxis.InterestingTickPercent <= minimumInterestingTickPercent) || (predicteeAxis.Count < 1))
+						continue;
 
 					// Try each future day					
 					foreach (int futureDay in futureDayArray) {
-						CorrelationResult cr = GetCorrelation(predictorAxis, predicteeAxis, futureDay, changePercentThreshold);
+						CorrelationResult cr = GetCorrelation(predictorAxis, predicteeAxis, futureDay, changePercentThreshold, minimumTicksComparedCount);
+
+						if (cr == null)
+							continue;
 
 						// Put the result into a linear list for sorting
 						if ((cr.PositiveSignAgreementPercent >= interestingPercentCutoff) || (cr.NegativeSignAgreementPercent >= interestingPercentCutoff))
@@ -107,9 +63,12 @@ namespace GoogleFinanceLibrary {
 		}
 		
 		// Private methods		
-		private static CorrelationResult GetCorrelation(TickList predictorAxis, TickList predicteeAxis, int futureDays, double thresholdPercent) {
+		private static CorrelationResult GetCorrelation(TickList predictorAxis, TickList predicteeAxis, int futureDays, double thresholdPercent, int minimumTotalTicksCompared) {
 			int positiveAgreementCount = 0;
-			int negativeAgreementCount = 0;
+			int negativeAgreementCount = 0;			
+
+			// Keep track of compared changes
+			Dictionary<DateTime, Tuple<double, double>> comparedPercentChanges = new Dictionary<DateTime, Tuple<double, double>>();
 
 			// Go through each date in the predictor
 			for (int i = 0; i < predictorAxis.Count; i++) {				
@@ -118,8 +77,8 @@ namespace GoogleFinanceLibrary {
 				if (futureDateIndex >= predictorAxis.Count)
 					continue;
 	
-				Tick predictorTick = predictorAxis[i];
-				DateTime futureDate = predictorAxis[futureDateIndex].Date;
+				Tick predictorTick = predictorAxis.Values[i];
+				DateTime futureDate = predictorAxis.Values[futureDateIndex].Date;
 
 				// Get the corresponding date for the predictee
 				Tick predicteeTick = predicteeAxis.GetTickByDate(futureDate);
@@ -128,25 +87,31 @@ namespace GoogleFinanceLibrary {
 		
 				// Check for agreement
 				double predictorChange = predictorTick.GetChangePercent(true);
-				double predicteeChange = predictorTick.GetChangePercent(false);
+				double predicteeChange = predicteeTick.GetChangePercent(false);
 
 				FinanceMath.SignAgreement doesAgree = FinanceMath.GetSignAgreement(predictorChange, predicteeChange, thresholdPercent);
-
+				comparedPercentChanges.Add(predicteeTick.Date, new Tuple<double, double>(predictorChange, predicteeChange));
+								
 				if (doesAgree == FinanceMath.SignAgreement.Positive)
 					positiveAgreementCount++;
 				else if (doesAgree == FinanceMath.SignAgreement.Negative)
 					negativeAgreementCount++;
 			}
 
-			double count = Math.Max(predictorAxis.Count, predicteeAxis.Count);
+			// Only create a real result if there are a comparable amount of points in predictor and predictee
+			if (comparedPercentChanges.Count <= minimumTotalTicksCompared)
+				return null;
+
 			CorrelationResult result = new CorrelationResult() {
 				 FutureDays = futureDays,
-				 PredictorSymbol = predictorAxis.First().SymbolWithExchange, 
+				 PredictorSymbol = predictorAxis.Values.First().SymbolWithExchange, 
 				 PredictorTicks = predictorAxis.GetData(t => t.ClosePrice),
-				 PredicteeSymbol = predicteeAxis.First().SymbolWithExchange, 
+				 PredicteeSymbol = predicteeAxis.Values.First().SymbolWithExchange, 
 				 PredicteeTicks = predicteeAxis.GetData(t => t.ClosePrice),
-				 PositiveSignAgreementPercent = ((double)positiveAgreementCount) / count * 100, 
-				 NegativeSignAgreementPercent = ((double)negativeAgreementCount) / count * 100				 
+				 PositiveSignAgreementPercent = Math.Round(((double)positiveAgreementCount) / ((double)comparedPercentChanges.Count) * 100, 2),
+				 NegativeSignAgreementPercent = Math.Round(((double)negativeAgreementCount) / ((double)comparedPercentChanges.Count) * 100, 2),
+			 	 CheckedTickCount = comparedPercentChanges.Count,
+				 ComparedTickPercentChanges = comparedPercentChanges
 			};
 
 			return result;
@@ -165,37 +130,6 @@ namespace GoogleFinanceLibrary {
 					problems.Add(keyValue.Key);
 
 			return problems;
-		}
-		/*private void RemoveDates(List<DateTime> dates) {
-			foreach (DateTime date in dates) {
-				dateDictionary.Remove(date);
-
-				foreach (TickList tl in symbolDictionary.Values) {
-					// Set the new last time
-					foreach (Tick t in tl)
-						if (t.Date == date) 
-							t.LastTick = t.LastTick.LastTick;						
-										
-					tl.RemoveAll(t => t.Date == date);
-				}
-			}
-		}
-		private static void RemoveKeys<TPrimary, TSecondary>(List<TPrimary> keys, Dictionary<TPrimary, TickList> primaryDictionary, Dictionary<TSecondary, TickList> secondaryDictionary,
-			Func<Tick, TPrimary> selector) {
-			foreach (TPrimary key in keys) {
-				primaryDictionary.Remove(key);
-
-				foreach (TickList tl in secondaryDictionary.Values) {
-					// Set the new last time
-					foreach (Tick t in tl)
-						if (selector(t).Equals(key))
-							if (t.LastTick != null)
-								t.LastTick = t.LastTick.LastTick;
-
-					tl.RemoveAll(t => selector(t).Equals(key));
-				}
-			}
-		}
-		*/
+		}	
 	}
 }
