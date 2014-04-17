@@ -48,7 +48,7 @@ namespace GoogleFinanceLibrary {
 							continue;
 
 						// Put the result into a linear list for sorting
-						if ((cr.PositiveSignAgreementPercent >= config.InterestingPercentCutoff) || (cr.NegativeSignAgreementPercent >= config.InterestingPercentCutoff))
+						if ((cr.PositiveSignAgreementPercent >= config.InterestingSignAgreementPercentCutoff) || (cr.NegativeSignAgreementPercent >= config.InterestingSignAgreementPercentCutoff))
 							linearResultList.Add(cr);
 					}
 				}
