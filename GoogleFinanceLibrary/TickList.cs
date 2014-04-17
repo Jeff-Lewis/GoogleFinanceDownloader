@@ -6,29 +6,31 @@ using System.Threading.Tasks;
 
 namespace GoogleFinanceLibrary {	
 	public class TickList : SortedList<DateTime, Tick> {
-		// Constants
-		//private const double MinimumPercentInterestingTicks = 0.50;
-
 		// Public properties
-		public double InterestingTickPercent { get; private set; }
+		public double PredictorInterestingTickPercent { get; private set; }
+		public double PredicteeInterestingTickPercent { get; private set; }
 
 		// Factory method
-		public static TickList FromIEnumerable(IEnumerable<Tick> tickEnumerable, DateTime startDate){
+		public static TickList FromIEnumerable(IEnumerable<Tick> tickEnumerable, CorrelationConfig config){
 			TickList result = new TickList();
 
 			// Add
-			int totalTickCount = 0, interestingTickCount = 0;
+			int totalTickCount = 0, predictorInterestingTickCount = 0, predicteeInterestingTickCount = 0;
 			foreach (Tick t in tickEnumerable) {
-				if (t.Date >= startDate) {
+				if (t.Date >= config.StartDate) {
 					totalTickCount++;
 					result.Add(t.Date, t);
 
-					if (t.IsChangeInteresting(true))
-						interestingTickCount++;					
+					if (t.IsChangeInteresting(true, config.PredictorChangePercentThreshold))
+						predictorInterestingTickCount++;
+
+					if (t.IsChangeInteresting(true, config.PredicteeChangePercentThreshold))
+						predicteeInterestingTickCount++;
 				}
 			}
 
-			result.InterestingTickPercent = ((double)interestingTickCount) / ((double)totalTickCount) * 100;
+			result.PredictorInterestingTickPercent = ((double)predictorInterestingTickCount) / ((double)totalTickCount) * 100;
+			result.PredicteeInterestingTickPercent = ((double)predicteeInterestingTickCount) / ((double)totalTickCount) * 100;
 			
 			// Set last ticks
 			for (int i = 1; i < result.Count; i++) 

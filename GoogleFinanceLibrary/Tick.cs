@@ -6,9 +6,6 @@ using System.Threading.Tasks;
 
 namespace GoogleFinanceLibrary {	
 	public class Tick : IComparable<Tick> {
-		// Constants
-		private const double MinimumInterestingChangePercent = 0.3;
-
 		// Public properties
 		public string SymbolWithExchange { get; private set; }
 		public DateTime Date {get; private set;}
@@ -38,9 +35,9 @@ namespace GoogleFinanceLibrary {
 
 			return Math.Round((ClosePrice - lastPrice) / lastPrice * 100, 2);
 		}
-		public bool IsChangeInteresting(bool sinceLastClose) {
+		public bool IsChangeInteresting(bool sinceLastClose, double minimumInterestingChangePercent) {
 			double changePercent = GetChangePercent(sinceLastClose);
-			if (Math.Abs(changePercent) >= MinimumInterestingChangePercent)
+			if (Math.Abs(changePercent) >= minimumInterestingChangePercent)
 				return true;
 			else
 				return false;

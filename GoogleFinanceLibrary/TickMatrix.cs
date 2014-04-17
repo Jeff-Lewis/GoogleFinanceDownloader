@@ -22,8 +22,7 @@ namespace GoogleFinanceLibrary {
 		public IEnumerable<string> GetAllSymbols() {
 			return symbolDictionary.Keys;
 		}
-		public List<CorrelationResult> FindCorrelations(int[] futureDayArray, int topBottomCount, double changePercentThreshold, int interestingPercentCutoff, 
-			int minimumInterestingTickPercent, int minimumTicksComparedCount)
+		public List<CorrelationResult> FindCorrelations(CorrelationConfig config)
 		{
 			List<CorrelationResult> linearResultList = new List<CorrelationResult>();				
 			string[] symbols = GetAllSymbols().ToArray();
@@ -32,38 +31,38 @@ namespace GoogleFinanceLibrary {
 			for (int i = 0; i < symbols.Length; i++) {
 				TickList predictorAxis = GetMultiple(symbols[i]);
 
-				if ((predictorAxis.InterestingTickPercent <= minimumInterestingTickPercent) || (predictorAxis.Count < 1))
+				if ((predictorAxis.PredictorInterestingTickPercent <= config.InterestingTickPercent) || (predictorAxis.Count < 1))
 					continue;
 
 				for (int j = 0; j < symbols.Length; j++) {
 					TickList predicteeAxis = GetMultiple(symbols[j]);
 
-					if ((predicteeAxis.InterestingTickPercent <= minimumInterestingTickPercent) || (predicteeAxis.Count < 1))
+					if ((predicteeAxis.PredicteeInterestingTickPercent <= config.InterestingTickPercent) || (predicteeAxis.Count < 1))
 						continue;
 
 					// Try each future day					
-					foreach (int futureDay in futureDayArray) {
-						CorrelationResult cr = GetCorrelation(predictorAxis, predicteeAxis, futureDay, changePercentThreshold, minimumTicksComparedCount);
+					foreach (int futureDay in config.FutureDays) {
+						CorrelationResult cr = GetCorrelation(predictorAxis, predicteeAxis, futureDay, config);
 
 						if (cr == null)
 							continue;
 
 						// Put the result into a linear list for sorting
-						if ((cr.PositiveSignAgreementPercent >= interestingPercentCutoff) || (cr.NegativeSignAgreementPercent >= interestingPercentCutoff))
+						if ((cr.PositiveSignAgreementPercent >= config.InterestingPercentCutoff) || (cr.NegativeSignAgreementPercent >= config.InterestingPercentCutoff))
 							linearResultList.Add(cr);
 					}
 				}
 			}
 
 			// Only care about most strongly correlated, in either direction			
-			List<CorrelationResult> interestingResults = linearResultList.OrderByDescending(cr => cr.PositiveSignAgreementPercent).Take(topBottomCount).ToList();
-			interestingResults.AddRange(linearResultList.OrderByDescending(cr => cr.NegativeSignAgreementPercent).Take(topBottomCount).ToList());
+			List<CorrelationResult> interestingResults = linearResultList.OrderByDescending(cr => cr.PositiveSignAgreementPercent).Take(config.TopBottomCount).ToList();
+			interestingResults.AddRange(linearResultList.OrderByDescending(cr => cr.NegativeSignAgreementPercent).Take(config.TopBottomCount).ToList());
 
 			return interestingResults;
 		}
 		
-		// Private methods		
-		private static CorrelationResult GetCorrelation(TickList predictorAxis, TickList predicteeAxis, int futureDays, double thresholdPercent, int minimumTotalTicksCompared) {
+		// Private methods			
+		private static CorrelationResult GetCorrelation(TickList predictorAxis, TickList predicteeAxis, int futureDay, CorrelationConfig config) {
 			int positiveAgreementCount = 0;
 			int negativeAgreementCount = 0;			
 
@@ -73,7 +72,7 @@ namespace GoogleFinanceLibrary {
 			// Go through each date in the predictor
 			for (int i = 0; i < predictorAxis.Count; i++) {				
 				// Find its date 'future days' ahead
-				int futureDateIndex = i + futureDays;
+				int futureDateIndex = i + futureDay;
 				if (futureDateIndex >= predictorAxis.Count)
 					continue;
 	
@@ -89,7 +88,7 @@ namespace GoogleFinanceLibrary {
 				double predictorChange = predictorTick.GetChangePercent(true);
 				double predicteeChange = predicteeTick.GetChangePercent(false);
 
-				FinanceMath.SignAgreement doesAgree = FinanceMath.GetSignAgreement(predictorChange, predicteeChange, thresholdPercent);
+				FinanceMath.SignAgreement doesAgree = FinanceMath.GetSignAgreement(predictorChange, predicteeChange, config.PredictorChangePercentThreshold, config.PredicteeChangePercentThreshold);
 				comparedPercentChanges.Add(predicteeTick.Date, new Tuple<double, double>(predictorChange, predicteeChange));
 								
 				if (doesAgree == FinanceMath.SignAgreement.Positive)
@@ -99,11 +98,11 @@ namespace GoogleFinanceLibrary {
 			}
 
 			// Only create a real result if there are a comparable amount of points in predictor and predictee
-			if (comparedPercentChanges.Count <= minimumTotalTicksCompared)
+			if (comparedPercentChanges.Count <= config.MinimumTicksComparedCount)
 				return null;
 
 			CorrelationResult result = new CorrelationResult() {
-				 FutureDays = futureDays,
+				 FutureDays = futureDay,
 				 PredictorSymbol = predictorAxis.Values.First().SymbolWithExchange, 
 				 PredictorTicks = predictorAxis.GetData(t => t.ClosePrice),
 				 PredicteeSymbol = predicteeAxis.Values.First().SymbolWithExchange, 

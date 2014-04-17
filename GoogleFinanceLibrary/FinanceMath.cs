@@ -8,9 +8,9 @@ namespace GoogleFinanceLibrary {
 	public static class FinanceMath {
 		public enum SignAgreement { Positive, Negative, Uninteresting }
 
-		public static SignAgreement GetSignAgreement(double a, double b, double thresholdPercent) {
-			if ((Math.Abs(a) >= thresholdPercent) &&
-				(Math.Abs(b) >= thresholdPercent)) {
+		public static SignAgreement GetSignAgreement(double a, double b, double aThresholdPercent, double bThresholdPercent) {
+			if ((Math.Abs(a) >= aThresholdPercent) &&
+				(Math.Abs(b) >= bThresholdPercent)) {
 					if (Math.Sign(a) == Math.Sign(b))
 						return SignAgreement.Positive;
 					else if (Math.Sign(a) == (Math.Sign(b) * -1))
@@ -32,7 +32,7 @@ namespace GoogleFinanceLibrary {
 			return ((double)signAgreementCount)/((double)arrayA.Length) * 100;
 		}
 
-		public static void GetInterestingSignAgreementPercent(double[] arrayA, double[] arrayB, double thresholdPercent, out double positiveAgreementPercent, out double negativeAgreementPercent) {
+		public static void GetInterestingSignAgreementPercent(double[] arrayA, double[] arrayB, double aThresholdPercent, double bThresholdPercent, out double positiveAgreementPercent, out double negativeAgreementPercent) {
 			if (arrayA.Length != arrayB.Length)
 				throw new Exception("Arrays are not the same length!");
 
@@ -42,21 +42,11 @@ namespace GoogleFinanceLibrary {
 
 			for (int i = 0; i < count; i++) {
 				// Check if there are meaningful changes
-				SignAgreement doesAgree = GetSignAgreement(arrayA[i], arrayB[i], thresholdPercent);
+				SignAgreement doesAgree = GetSignAgreement(arrayA[i], arrayB[i], aThresholdPercent, bThresholdPercent);
 				if (doesAgree == SignAgreement.Positive)
 					positiveAgreementCount++;
 				else if (doesAgree == SignAgreement.Negative)
-					negativeAgreementCount++;
-
-				/*if ((Math.Abs(arrayA[i]) >= thresholdPercent) &&
-					(Math.Abs(arrayB[i]) >= thresholdPercent)) {
-					if (Math.Sign(arrayA[i]) == Math.Sign(arrayB[i])) {
-						positiveAgreementCount++;
-					}
-					else if (Math.Sign(arrayA[i]) != Math.Sign(arrayB[i])) {
-						negativeAgreementCount++;
-					}					
-				}*/
+					negativeAgreementCount++;				
 			}
 
 			positiveAgreementPercent = ((double)positiveAgreementCount) / ((double)count) * 100;

@@ -41,6 +41,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CorrelationConfig.cs" />
     <Compile Include="CorrelationData.cs" />
     <Compile Include="CorrelationFinder.cs" />
     <Compile Include="CorrelationResult.cs" />

@@ -11,13 +11,16 @@ using Microsoft.VisualBasic.FileIO;
 
 namespace GoogleFinanceLibrary {
 	public class TickRetriever {
+		// Constants
+		private static readonly string fileSuffix = "companylist.csv";
+
 		// Private members
 		private static Dictionary<string, TickList> tickCache = new Dictionary<string, TickList>();
 				
 		// Public methods		
-		public static TickList GetData(string symbol, string exchange, DateTime startDate, DateTime endDate, string dataFolder) {
+		public static TickList GetData(string symbol, string exchange, string dataFolder, CorrelationConfig config) {
 			// If we already have the data, dont get it again					
-			string file = (exchange + symbol + startDate.ToShortDateString() + endDate.ToShortDateString()).Replace('/', '_');
+			string file = (exchange + symbol + config.StartDate.ToShortDateString() + config.EndDate.ToShortDateString()).Replace('/', '_');
 			string fileName = Path.Combine(dataFolder, file);
 			string resultValue;
 
@@ -26,7 +29,7 @@ namespace GoogleFinanceLibrary {
 			else {
 				// Set up the url request
 				DownloadURIBuilder uriBuilder = new DownloadURIBuilder(exchange, symbol);
-				string url = uriBuilder.getGetPricesUrlForRecentData(startDate, endDate);
+				string url = uriBuilder.getGetPricesUrlForRecentData(config.StartDate, config.EndDate);
 
 				// Get the data
 				string downloadedData;
@@ -46,21 +49,21 @@ namespace GoogleFinanceLibrary {
 				WriteToFile(resultValue, fileName);
 			}
 
-			TickList result = ParseStringData(exchange, symbol, resultValue, startDate);								
+			TickList result = ParseStringData(exchange, symbol, resultValue, config);								
 
 			return result;
 		}
-		public static TickMatrix GetData(string[] exchanges, DateTime startDate, DateTime endDate, string dataFolder) {
+		public static TickMatrix GetData(string dataFolder, CorrelationConfig config) {
 			TickMatrix result = new TickMatrix();
 			List<string> symbolMasterList = new List<string>();
-			foreach (string exchange in exchanges) {
+			foreach (string exchange in config.Exchanges) {
 				// Get the symbols
-				List<string> symbols = ReadSymbolsFromFile(exchange + "companylist.csv", dataFolder);
+				List<string> symbols = ReadSymbolsFromFile(exchange + fileSuffix, dataFolder);
 
 				int failedSymbolCount = 0;
 				foreach (string symbol in symbols) {
 					try {
-						TickList ticks = GetData(symbol, exchange, startDate, endDate, dataFolder);						
+						TickList ticks = GetData(symbol, exchange, dataFolder, config);						
 						result.Set(exchange + ":" + symbol, ticks);
 					} catch (Exception ex) {
 						// Maybe theres no data for this symbol.  Screw it.
@@ -76,7 +79,7 @@ namespace GoogleFinanceLibrary {
 		}
 		
 		// Private methods
-		private static TickList ParseStringData(string exchange, string symbol, string dataString, DateTime startDate) {
+		private static TickList ParseStringData(string exchange, string symbol, string dataString, CorrelationConfig config) {
 			// Split into lines
 			string[] lines = dataString.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
 
@@ -84,8 +87,8 @@ namespace GoogleFinanceLibrary {
 			var query = from line in lines.Skip(1)
 						let data = line.Split(',')
 						select Tick.FromStringArray(exchange, symbol, data);
-					
-			return TickList.FromIEnumerable(query, startDate);
+
+			return TickList.FromIEnumerable(query, config);
 		}
 		private static void WriteToFile(string contents, string fileName) {			
 			using (TextWriter tw = new StreamWriter(File.OpenWrite(fileName))) 
