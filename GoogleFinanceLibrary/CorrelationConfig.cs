@@ -30,14 +30,15 @@ namespace GoogleFinanceLibrary {
 		public int InterestingSignAgreementPercentCutoff { get; private set; }
 		public int InterestingTickPercent { get; private set; }
 		public int MinimumTicksComparedCount { get; private set; }
+		public int MinimumStockPriceDollars { get; private set; }
 
 		// Constructor
 		private CorrelationConfig() {
 			EndDate = new DateTime(2014, 3, 25);
-			StartDate = EndDate.AddMonths(-3);
-			Exchanges = new string[] { /*"NYSE", "NASDAQ", "CURRENCY",*/ "" };
-			FutureDays = Enumerable.Range(1, 3).ToArray();
-			PredictorChangePercentThreshold = 0.2;
+			StartDate = EndDate.AddMonths(-5);
+			Exchanges = new string[] { "NYSE" , "NASDAQ", "CURRENCY", ""};
+			FutureDays = Enumerable.Range(1, 2).ToArray();
+			PredictorChangePercentThreshold = 0.3;
 			PredicteeChangePercentThreshold = 0.8;
 			//PredictorChangePercentThreshold = 0.3;
 			//PredicteeChangePercentThreshold = 0.3;
@@ -45,6 +46,7 @@ namespace GoogleFinanceLibrary {
 			InterestingSignAgreementPercentCutoff = 60;
 			InterestingTickPercent = 50;
 			MinimumTicksComparedCount = 50;		// 3 months data is about 60 ticks
+			MinimumStockPriceDollars = 10;
 		}
 	}
 }

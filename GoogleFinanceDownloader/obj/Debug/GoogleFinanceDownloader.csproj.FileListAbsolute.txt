@@ -3,3 +3,4 @@ C:\Users\xdotiwalla\SkyDrive\Documents\Source\GoogleFinanceDownloader_demo\Googl
 C:\Users\xdotiwalla\SkyDrive\Documents\Source\GoogleFinanceDownloader_demo\GoogleFinanceDownloaderTest\GoogleFinanceDownloader\bin\Debug\GoogleFinanceDownloader.pdb
 C:\Users\xdotiwalla\SkyDrive\Documents\Source\GoogleFinanceDownloader_demo\GoogleFinanceDownloaderTest\GoogleFinanceDownloader\obj\Debug\GoogleFinanceDownloader.dll
 C:\Users\xdotiwalla\SkyDrive\Documents\Source\GoogleFinanceDownloader_demo\GoogleFinanceDownloaderTest\GoogleFinanceDownloader\obj\Debug\GoogleFinanceDownloader.pdb
+C:\Users\xdotiwalla\SkyDrive\Documents\Source\GoogleFinanceDownloader_demo\GoogleFinanceDownloaderTest\GoogleFinanceDownloader\obj\Debug\GoogleFinanceDownloader.csprojResolveAssemblyReference.cache

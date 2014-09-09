@@ -31,17 +31,21 @@ namespace GoogleFinanceLibrary {
 			for (int i = 0; i < symbols.Length; i++) {
 				TickList predictorAxis = GetMultiple(symbols[i]);
 
-				if ((predictorAxis.PredictorInterestingTickPercent <= config.InterestingTickPercent) || (predictorAxis.Count < 1))
+				if ((predictorAxis.PredictorInterestingTickPercent <= config.InterestingTickPercent) || (predictorAxis.Count < 1) || (predictorAxis.AveragePrice < config.MinimumStockPriceDollars))
 					continue;
 
 				for (int j = 0; j < symbols.Length; j++) {
 					TickList predicteeAxis = GetMultiple(symbols[j]);
 
-					if ((predicteeAxis.PredicteeInterestingTickPercent <= config.InterestingTickPercent) || (predicteeAxis.Count < 1))
+					if ((predicteeAxis.PredicteeInterestingTickPercent <= config.InterestingTickPercent) || (predicteeAxis.Count < 1) || (predicteeAxis.AveragePrice < config.MinimumStockPriceDollars))
 						continue;
 
 					// Try each future day					
 					foreach (int futureDay in config.FutureDays) {
+						// For the same day, dont check against yourself
+						if ((futureDay == 0) && (symbols[i] == symbols[j]))
+							continue;
+
 						CorrelationResult cr = GetCorrelation(predictorAxis, predicteeAxis, futureDay, config);
 
 						if (cr == null)

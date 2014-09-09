@@ -9,6 +9,7 @@ namespace GoogleFinanceLibrary {
 		// Public properties
 		public double PredictorInterestingTickPercent { get; private set; }
 		public double PredicteeInterestingTickPercent { get; private set; }
+		public double AveragePrice { get; private set; }
 
 		// Factory method
 		public static TickList FromIEnumerable(IEnumerable<Tick> tickEnumerable, CorrelationConfig config){
@@ -17,7 +18,7 @@ namespace GoogleFinanceLibrary {
 			// Add
 			int totalTickCount = 0, predictorInterestingTickCount = 0, predicteeInterestingTickCount = 0;
 			foreach (Tick t in tickEnumerable) {
-				if (t.Date >= config.StartDate) {
+				if ((t.Date >= config.StartDate) && (t.Date <= config.EndDate)) {
 					totalTickCount++;
 					result.Add(t.Date, t);
 
@@ -31,6 +32,9 @@ namespace GoogleFinanceLibrary {
 
 			result.PredictorInterestingTickPercent = ((double)predictorInterestingTickCount) / ((double)totalTickCount) * 100;
 			result.PredicteeInterestingTickPercent = ((double)predicteeInterestingTickCount) / ((double)totalTickCount) * 100;
+
+			// Set Average price
+			result.AveragePrice = result.Average(t => t.Value.ClosePrice);
 			
 			// Set last ticks
 			for (int i = 1; i < result.Count; i++) 

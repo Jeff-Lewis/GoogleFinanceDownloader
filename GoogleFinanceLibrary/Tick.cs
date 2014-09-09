@@ -16,6 +16,10 @@ namespace GoogleFinanceLibrary {
 		public double Volume { get; private set; }
 		public Tick LastTick { get; set; }
 		
+		// Private members
+		private double? ChangePercentSinceLastClose = null;
+		private double? ChangePercentSinceOpen = null;
+		
 		// Factory method
 		public static Tick FromStringArray(string exchange, string symbol, string[] data) {
 			return new Tick {
@@ -31,9 +35,23 @@ namespace GoogleFinanceLibrary {
 		
 		// Public methods
 		public double GetChangePercent(bool sinceLastClose) {
-			double lastPrice = (sinceLastClose && LastTick != null) ? LastTick.ClosePrice : OpenPrice;
+			if (sinceLastClose && (LastTick != null)) {
+				if (ChangePercentSinceLastClose == null)
+					ChangePercentSinceLastClose = (ClosePrice - LastTick.ClosePrice) / LastTick.ClosePrice * 100;
+				
+				if (double.IsInfinity(ChangePercentSinceLastClose.Value))
+					ChangePercentSinceLastClose = 0;				
 
-			return Math.Round((ClosePrice - lastPrice) / lastPrice * 100, 2);
+				return ChangePercentSinceLastClose.Value;
+			} else {
+				if (ChangePercentSinceOpen == null)
+					ChangePercentSinceOpen = (ClosePrice - OpenPrice) / OpenPrice * 100;
+				
+				if (double.IsInfinity(ChangePercentSinceOpen.Value))
+					ChangePercentSinceOpen = 0;
+				
+				return ChangePercentSinceOpen.Value;
+			}
 		}
 		public bool IsChangeInteresting(bool sinceLastClose, double minimumInterestingChangePercent) {
 			double changePercent = GetChangePercent(sinceLastClose);

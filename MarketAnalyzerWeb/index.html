@@ -61,20 +61,17 @@
           $.getJSON(rawUri).done(drawRawChart).fail(ajaxFail);
       }
       
-      function drawChangeShiftedChart(changeDictionary, predictorSymbol, predicteeSymbol, futureDays) {
+      /*function drawChangeShiftedChartColumn(changeDictionary, predictorSymbol, predicteeSymbol, futureDays) {
           // Create the data table.
           var data = new google.visualization.DataTable();
           data.addColumn('date', 'Date');
-          data.addColumn('number', 'PredictorTicks ' + predictorSymbol);
-          data.addColumn('number', 'PredicteeTicks ' + predicteeSymbol);
-
-          //for (var i = 0; i < changeDictionary.length; i++) {              
+          data.addColumn('number', 'PredictorTicks ' + predictorSymbol);          
+          data.addColumn('number', 'PredicteeTicks ' + predicteeSymbol);          
+                           
           for (var date in changeDictionary) {
-              var tor = changeDictionary[date].m_item1;
-              var tee = changeDictionary[date].m_item2;
               data.addRow([new Date(Date.parse(date)), changeDictionary[date].m_Item1, changeDictionary[date].m_Item2]);
-          }
-          
+          }          
+
           // Set chart options
           var options = {
               title: 'Percent Change, shifted by ' + futureDays + ', Predictor: ' + predictorSymbol + ' Predictee: ' + predicteeSymbol,
@@ -83,7 +80,32 @@
           };
 
           // Instantiate and draw our chart, passing in some options.
-          var chart = new google.visualization.ColumnChart(document.getElementById('chart_div'));
+          var chart = new google.visualization.ColumnChart(document.getElementById('chart_div'));          
+          chart.draw(data, options);
+      }*/
+
+      function drawChangeShiftedChart(changeDictionary, predictorSymbol, predicteeSymbol, futureDays) {
+          var dataArray = new Array();
+          for (var date in changeDictionary) {
+              var dateAsDate = new Date(Date.parse(date));
+              var tor = changeDictionary[date].m_Item1;
+              var tee = changeDictionary[date].m_Item2;
+              dataArray.push([dateAsDate, tor, tor, tee, tee]);
+          }
+
+          // Create the data table
+          var data = google.visualization.arrayToDataTable(dataArray, true);
+
+          // Set chart options
+          var options = {
+              title: 'Percent Change, shifted by ' + futureDays + ', Predictor: ' + predictorSymbol + ' Predictee: ' + predicteeSymbol,
+              height: 500,
+              legend: { position: 'bottom' },
+              animation: { duration: 100 }
+          };
+
+          // Instantiate and draw our chart, passing in some options.
+          var chart = new google.visualization.CandlestickChart(document.getElementById('chart_div'));
           chart.draw(data, options);
       }
 
